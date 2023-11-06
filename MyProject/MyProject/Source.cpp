@@ -6,8 +6,8 @@ using namespace std;
 
 enum class UserTypes { ADMIN, BASIC, GUEST };
 
-class User{
-public:
+class User {
+
 	string userName = "";
 	char* password = nullptr;
 	UserTypes type = UserTypes::GUEST;
@@ -17,9 +17,9 @@ public:
 	static const int MIN_PSWD_SIZE = 6;
 	static const int MAX_PSWD_SIZE = 30;
 
-public:
+
 	void setUserName(const string name) {
-		if (name.length() < User::MIN_USER_SIZE || name.length() > User::MAX_USER_SIZE || !( (name[0] >= 'a' && name[0] <= 'z') || (name[0] >= 'A' && name[0] <= 'Z') ) )
+		if (name.length() < User::MIN_USER_SIZE || name.length() > User::MAX_USER_SIZE || !((name[0] >= 'a' && name[0] <= 'z') || (name[0] >= 'A' && name[0] <= 'Z')))
 			throw exception("Invalid username");
 		//exception to be created
 		else
@@ -27,9 +27,9 @@ public:
 	}
 
 	void setPassword(const char* pass) {
-		bool uppCaseChar = 0, lowCaseChar= 0, numChar = 0;
+		bool uppCaseChar = 0, lowCaseChar = 0, numChar = 0;
 
-		if (strlen(pass)<User::MIN_PSWD_SIZE || strlen(pass)>User::MAX_PSWD_SIZE)
+		if (strlen(pass) < User::MIN_PSWD_SIZE || strlen(pass) > User::MAX_PSWD_SIZE)
 			throw exception("Invalid passowrd");
 
 		if (!((pass[0] >= 'a' && pass[0] <= 'z') || (pass[0] >= 'A' && pass[0] <= 'Z') || (pass[0] >= '0' && pass[0] <= 9)))
@@ -51,15 +51,58 @@ public:
 		this->password = new char[strlen(pass) + 1];
 		strcpy_s(this->password, strlen(pass) + 1, pass);
 	}
-
+public:
 	void saveUser(const string fileName)
 	{
 		ofstream file;
-		file.open(fileName, ios::app);
-		//file << this->userName << " " << this->password << endl;
-		//file.write((char*)this, sizeof(User));
-		file << this;
+		file.open(fileName, ios::app, ios::binary);
+
+		int nameSize = (this->userName).size() + 1;
+		int passSize = strlen(this->password) + 1;
+
+		//file << nameSize;
+		file.write((char*)&nameSize, sizeof(int));
+		file.write((this->userName).c_str(), nameSize);
+
+		//file << passSize;
+		file.write((char*)&passSize, sizeof(int));
+		file.write(this->password, passSize);
+
 		file.close();
+	}
+
+	bool checkUser(const string fileName)
+	{
+		ifstream file;
+		file.open(fileName, ios::in, ios::binary);
+		int sizeUser, sizePass;
+		char* usernameArr = nullptr, * passwordArr = nullptr;
+		while (!file.eof()) {
+
+			file.read((char*)&sizeUser, sizeof(int));
+			cout << sizeUser;
+			usernameArr = new char[sizeUser];
+			file.read(usernameArr, sizeof(char) * sizeUser);
+
+			file.read((char*)&sizePass, sizeof(int));
+			passwordArr = new char[sizePass];
+			file.read(passwordArr, sizeof(char) * sizePass);
+
+			if (strcmp((this->userName).c_str(), usernameArr) == 0 && strcmp(this->password, passwordArr) == 0)
+			{
+				this->type = UserTypes::BASIC;
+				return 1;
+			}
+			delete[] usernameArr;
+			delete[] passwordArr;
+		}
+
+		file.close();
+		return 0;
+	}
+
+	UserTypes getType() {
+		return this->type;
 	}
 
 	User() {
@@ -104,12 +147,12 @@ void printIntroduction() {
 int main()
 {
 	printIntroduction();
-	
+
 	string username;
 	char* password = new char[20];
 	fstream TestFile;
 	string fileName = "testfile.txt";
-
+	UserTypes type;
 	//this should be included later in user 
 	char* response = new char[20];
 	cin.getline(response, 20);
@@ -122,44 +165,50 @@ int main()
 		cin >> username;
 		cout << "Enter password: ";
 		cin >> password;
-		User existingUser(username,password);
-	}
-	else 
-		if (strcmp(response, "guest") == 0)
-	{
-		User guestUser();
-	}
-	else 
-			if (strcmp(response, "create") == 0)
-	{
-		cout << "New username: ";
-		cin >> username;
-		cout << "New password: ";
-		cin >> password;
-		User newUser(username, password);
-		newUser.saveUser(fileName);
-
-	}
-	else
-	{
-		if (strcmp(response, "read") == 0)
+		User existingUser(username, password);
+		if (existingUser.checkUser(fileName))
 		{
-			User user;
-			ifstream file;
-			file.open(fileName, ios::out);
-			//file << this->userName << " " << this->password << endl;
-			//file.read((char*)&user, sizeof(User));
-			file >> user.userName >> user.password;
-			file.close();
-			cout << user.password;
+			cout << "Succesfull log in";
+			type = existingUser.getType();
+			if (type == UserTypes::BASIC)
+				cout << "Basic user";
+
+		}
+
+		else
+		{
+			cout << "incorrect username or password";
+			type = existingUser.getType();
+			if (type == UserTypes::GUEST)
+				cout << "guest user";
 		}
 	}
+	else
+		if (strcmp(response, "guest") == 0)
+		{
+			User guestUser();
+		}
+		else
+			if (strcmp(response, "create") == 0)
+			{
+				cout << "New username: ";
+				cin >> username;
+				cout << "New password: ";
+				cin >> password;
+				User newUser(username, password);
+				newUser.saveUser(fileName);
+
+			}
+			else
+			{
+
+			}
 
 	delete[] response;
 	delete[] password;
-	
+
 	//until here
 
-	
-	
+
+
 }
