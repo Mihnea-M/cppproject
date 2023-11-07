@@ -7,8 +7,8 @@
 using namespace std;
 
 enum class UserTypes { ADMIN, BASIC, GUEST };
-enum class Commands {LOGIN, CREATE};
-
+enum class AccountCommands {LOGIN, CREATE};
+enum class EventCommands {CREATE, VIEW, BUY, TICKET};
 class UserClass {
 
 	string userName = "";
@@ -36,13 +36,13 @@ public:
 
 	UserClass();
 
-	UserClass(const string name, const char* pass);
+	UserClass(const char* pass);
 
-	UserClass(const string name, const char* pass, const string filename, Commands command);
+	UserClass(const string name, const char* pass, const string filename, AccountCommands command);
 
 	UserClass(class UserClass* user);
 
 	~UserClass();
 
+	void operator=(UserClass source);
 };
-

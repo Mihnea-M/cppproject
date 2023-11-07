@@ -27,35 +27,76 @@ UserClass returnUser()
 {
 	string username;
 	char* password = new char[20];
-	const string fileName = "users.txt";
 	//this should be included later in user 
 	char* response = new char[20];
-	UserClass newUser;
-	cin.getline(response, 20);
-
-	response = transformInput(response);
-
-	if (strcmp(response, "log in") == 0)
+	while(1)
 	{
-		cout << "Enter username: ";
-		cin >> username;
-		cout << "Enter password: ";
-		cin >> password;
-		UserClass newUser(username, password, fileName, Commands::LOGIN);
-	}
-	else
-		if (strcmp(response, "create") == 0)
+		cin.getline(response, 20);
+
+		response = transformInput(response);
+
+		if (strcmp(response, "log in") == 0)
+		{
+			cout << "Enter username: ";
+			cin >> username;
+			cout << "Enter password: ";
+			cin >> password;
+			UserClass newUser(username, password, USERFILE, AccountCommands::LOGIN);
+			delete[] response;
+			delete[] password;
+			return newUser;
+		}
+		else if (strcmp(response, "create") == 0)
 		{
 			cout << "New username: ";
 			cin >> username;
 			cout << "New password: ";
 			cin >> password;
-			UserClass newUser(username, password, fileName, Commands::CREATE);
+			UserClass newUser(username, password, USERFILE, AccountCommands::CREATE);
+			delete[] response;
+			delete[] password;
+			return newUser;
 		}
-		else
-			UserClass newUser();
+		else if (strcmp(response, "admin") == 0) {
+			cout << "Enter admin password: ";
+			cin >> password;
+			UserClass newUser(password);
+			delete[] response;
+			delete[] password;
+			return newUser;
+		}
+		else if (strcmp(response, "guest") == 0)
+		{
+			UserClass newUser;
+			delete[] response;
+			delete[] password;
+			return newUser;
+		}
+		system("cls");
+		cout << "Please provide a valid input!" << endl << endl;
+		cout << "Would you like to log in, create a new accout or join as a guest? (type \"log in\", \"create\" or \"guest\")" << endl;
+	}
 
-	delete[] response;
-	delete[] password;
-	return newUser;
+}
+
+void printCommands(UserTypes type) {
+	
+	switch (type)
+	{
+	case UserTypes::ADMIN:
+	{
+		cout << endl << "Type \"Create\" to create an event, \"view\" to see all available events, \"buy\" to buy a ticket or \"ticket\" to view an existing ticket." << endl;
+		break;
+	}
+	case UserTypes::BASIC:
+	{
+		cout << endl << "Type \"view\" to see all available events, \"buy\" to buy a ticket or \"ticket\" to view an existing ticket." << endl;
+		break;
+	}
+	case UserTypes::GUEST:
+	{
+		cout << endl << "Type \"view\" to see all available events or \"ticket\" to view an existing ticket." << endl;
+		break;
+	}
+	}
 }

@@ -12,8 +12,7 @@ using namespace std;
 int main()
 {
 	printIntroduction();
-	UserClass User = returnUser();
-
-
-
+	UserClass user;
+	user.operator=(returnUser());
+	printCommands(user.getType());
 }

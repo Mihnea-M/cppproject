@@ -34,62 +34,77 @@ void UserClass::setPassword(const char* pass) {
 	this->password = new char[strlen(pass) + 1];
 	strcpy_s(this->password, strlen(pass) + 1, pass);
 }
+
 	void UserClass::saveUser(const string fileName)
 	{
-		ofstream file;
-		file.open(fileName, ios::app, ios::binary);
+		if (this->checkUserName(fileName) == 1)
+		{
+			system("cls");
+			cout << endl << "Succesfully created new account." << endl;
+			ofstream file;
+			file.open(fileName, ios::app, ios::binary);
 
-		int nameSize = (this->userName).size() + 1;
-		int passSize = strlen(this->password) + 1;
+			int nameSize = (this->userName).size() + 1;
+			int passSize = strlen(this->password) + 1;
 
-		//file << nameSize;
-		file.write((char*)&nameSize, sizeof(int));
-		file.write((this->userName).c_str(), nameSize);
 
-		//file << passSize;
-		file.write((char*)&passSize, sizeof(int));
-		file.write(this->password, passSize);
+			file.write((char*)&nameSize, sizeof(int));
+			file.write((this->userName).c_str(), nameSize);
 
-		file.close();
-		if (this->checkUserName(fileName))
-			cout << endl << "Succesfully created new account. Welcome " << this->userName;
+
+			file.write((char*)&passSize, sizeof(int));
+			file.write(this->password, passSize);
+
+			file.close();
+		}
 		else
 		{
+			system("cls");
 			cout << "Username already taken";
 			throw exception("Existing username");
 		}
-
+		
 	}
 
 	void UserClass::checkUser(const string fileName)
 	{
-		ifstream file;
 		bool test = 0;
-		file.open(fileName, ios::in, ios::binary);
 		int sizeUser, sizePass;
 		char* usernameArr = nullptr, * passwordArr = nullptr;
-		while (!file.eof()) {
 
+		ifstream file;
+		file.open(fileName, ios::in, ios::binary);
+
+		while (!file.eof()) 
+		{
+			//reading size of username and username
 			file.read((char*)&sizeUser, sizeof(int));
 			usernameArr = new char[sizeUser];
 			file.read(usernameArr, sizeof(char) * sizeUser);
 
+			//reading size of password and password
 			file.read((char*)&sizePass, sizeof(int));
 			passwordArr = new char[sizePass];
 			file.read(passwordArr, sizeof(char) * sizePass);
 
+			//checking if the log in credentials are correct
 			if (strcmp((this->userName).c_str(), usernameArr) == 0 && strcmp(this->password, passwordArr) == 0)
 			{
 				test = 1;
 				this->type = UserTypes::BASIC;
-				cout << endl << "Succesfully logged in.";
+				system("cls");
+				cout << endl << "Succesfully logged in." << endl;
 			}
+
 			delete[] usernameArr;
 			delete[] passwordArr;
 		}
+
 		file.close();
+
 		if (test == 0)
 		{
+			system("cls");
 			cout << endl << "Invalid username/password!";
 			throw exception ("Log in failed");
 		}
@@ -97,11 +112,11 @@ void UserClass::setPassword(const char* pass) {
 	}
 
 	bool UserClass::checkUserName(const string fileName) {
-		ifstream file;
 		bool test = 0;
-		file.open(fileName, ios::in, ios::binary);
 		int sizeUser, sizePass;
 		char* usernameArr = nullptr, * passwordArr = nullptr;
+		ifstream file;
+		file.open(fileName, ios::in, ios::binary);
 
 		while (!file.eof()) {
 
@@ -129,7 +144,10 @@ void UserClass::setPassword(const char* pass) {
 			return 0;
 		}
 		else
+		{
+			//available username
 			return 1;
+		}
 	}
 
 	UserTypes UserClass::getType() {
@@ -140,18 +158,29 @@ void UserClass::setPassword(const char* pass) {
 
 	}
 
-	UserClass::UserClass(const string name, const char* pass) {
-		this->setUserName(name);
+	UserClass::UserClass(const char* pass) {
 		this->setPassword(pass);
+		if (strcmp(this->password, "Pass123") == 0)
+		{
+			this->userName = "Admin";
+			this->type = UserTypes::ADMIN;
+			system("cls");
+			cout << endl << "Logged in as admin." << endl;
+		}
+		else
+		{
+			system("cls");
+			cout << "Wrong password. Logging is as guest.";
+		}
 	}
 
-	UserClass::UserClass(const string name, const char* pass, const string filename, Commands command) {
+	UserClass::UserClass(const string name, const char* pass, const string filename, AccountCommands command) {
 		this->setUserName(name);
 		this->setPassword(pass);
 
-		if (command == Commands::CREATE)
+		if (command == AccountCommands::CREATE)
 			this->saveUser(filename);
-		else if (command == Commands::LOGIN)
+		else if (command == AccountCommands::LOGIN)
 			this->checkUser(filename);
 
 		this->type = UserTypes::BASIC;
@@ -161,6 +190,19 @@ void UserClass::setPassword(const char* pass) {
 		delete[] this->password;
 		this->password = new char[strlen(user->password) + 1];
 		strcpy_s(this->password, strlen(user->password) + 1, user->password);
+		this->type = user->type;
+		this->userName = user->userName;
+	}
+
+	void UserClass::operator=(UserClass source) {
+		this->userName = source.userName;
+		this->type = source.type;
+		if (this == &source)
+			return;
+		delete[] this->password;
+		this->password = new char[strlen(source.password) + 1];
+		strcpy_s(this->password, strlen(source.password) + 1, source.password);
+		this->type = source.type;
 	}
 
 	UserClass::~UserClass() {
