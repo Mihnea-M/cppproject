@@ -20,28 +20,39 @@ char* transformInput(const char* word)
 
 void printIntroduction() {
 	cout << "Welcome to the ticketing application." << endl << endl;
-	cout << "Would you like to log in, create a new accout or join as a guest? (type \"log in\", \"create\" or \"guest\")" << endl;
+	cout << "Would you like to log in, create a new accout or join as a guest? (type \"login\", \"create\" or \"guest\")" << endl;
 }
 
 UserClass returnUser() 
 {
 	string username;
 	char* password = new char[20];
-	//this should be included later in user 
 	char* response = new char[20];
 	while(1)
 	{
-		cin.getline(response, 20);
+		cin >> response;
 
 		response = transformInput(response);
 
-		if (strcmp(response, "log in") == 0)
+		if (strcmp(response, "login") == 0)
 		{
 					cout << "Enter username: ";
 					cin >> username;
+					while (UserClass::checkUserName(username))
+					{
+						system("cls");
+						cout << endl << "Invalid username. Try again: ";
+						cin >> username;
+
+					}
 					cout << "Enter password: ";
 					cin >> password;
-					UserClass newUser(username, password, USERFILE, AccountCommands::LOGIN);
+					while (UserClass::checkPassword(password))
+					{
+						cout << endl << "Invalid password. Try again: ";
+						cin >> password;
+					}
+					UserClass newUser(username, password);
 					delete[] response;
 					delete[] password;
 					return newUser;
@@ -51,9 +62,23 @@ UserClass returnUser()
 		{
 			cout << "New username: ";
 			cin >> username;
-			cout << "New password: ";
+			while (UserClass::checkUserName(username))
+			{
+				system("cls");
+				cout << endl << "Invalid username. Try again: ";
+				cin >> username;
+
+			}
+			//citire email si varsta
+			cout << "Your password must contain at least a capital letter, a small letter and a number. New password: ";
 			cin >> password;
-			UserClass newUser(username, password, USERFILE, AccountCommands::CREATE);
+			while (UserClass::checkPassword(password))
+			{
+				cout << endl << "Invalid password. Try again: ";
+				cin >> password;
+			}
+			UserClass newUser(username, password);
+			newUser.saveUser();
 			delete[] response;
 			delete[] password;
 			return newUser;

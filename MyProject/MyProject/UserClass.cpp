@@ -1,22 +1,63 @@
 #include "UserClass.h"
 
+//Validate if username is valid and available
+bool UserClass::checkUserName(string newUser) {
+	if (newUser.length() < UserClass::MIN_USER_SIZE || newUser.length() > UserClass::MAX_USER_SIZE || !((newUser[0] >= 'a' && newUser[0] <= 'z') || (newUser[0] >= 'A' && newUser[0] <= 'Z')))
+	{
+		//invalid username
+		return 1;
+	}
+	bool test = 0;
+	int sizeUser=0, sizePass=0;
+	char* usernameArr = nullptr, * passwordArr = nullptr;
+	ifstream file;
+	file.open(UserClass::USERFILE, ios::in, ios::binary);
 
-void UserClass::setUserName(const string name) {
-	if (name.length() < UserClass::MIN_USER_SIZE || name.length() > UserClass::MAX_USER_SIZE || !((name[0] >= 'a' && name[0] <= 'z') || (name[0] >= 'A' && name[0] <= 'Z')))
-		throw exception("Invalid username");
-	//exception to be created
+	while (!file.eof()) {
+
+		file.read((char*)&sizeUser, sizeof(int));
+		usernameArr = new char[sizeUser];
+		file.read(usernameArr, sizeof(char) * sizeUser);
+
+		file.read((char*)&sizePass, sizeof(int));
+		passwordArr = new char[sizePass];
+		file.read(passwordArr, sizeof(char) * sizePass);
+
+		if (strcmp((newUser).c_str(), usernameArr) == 0)
+		{
+			test = 1;
+		}
+		delete[] usernameArr;
+		delete[] passwordArr;
+	}
+
+	file.close();
+
+	if (test == 1)
+	{
+		//username taken
+		return 1;
+	}
 	else
-		this->userName = name;
+	{
+		//available username
+		return 0;
+	}
 }
 
-void UserClass::setPassword(const char* pass) {
+//Validating passwords
+bool UserClass::checkPassword(const char* pass) {
 	bool uppCaseChar = 0, lowCaseChar = 0, numChar = 0;
 
 	if (strlen(pass) < UserClass::MIN_PSWD_SIZE || strlen(pass) > UserClass::MAX_PSWD_SIZE)
-		throw exception("Invalid passowrd");
+	{
+		return 1;
+	}
 
 	if (!((pass[0] >= 'a' && pass[0] <= 'z') || (pass[0] >= 'A' && pass[0] <= 'Z') || (pass[0] >= '0' && pass[0] <= 9)))
-		throw exception("Invalid passowrd");
+	{
+		return 1;
+	}
 
 	for (int i = 0;i <= strlen(pass);i++) {
 		if (pass[i] >= 'A' && pass[i] <= 'Z')
@@ -26,23 +67,30 @@ void UserClass::setPassword(const char* pass) {
 		if (pass[i] >= '0' && pass[i] <= '9')
 			numChar = 1;
 	}
-
 	if (!(numChar && lowCaseChar && uppCaseChar))
-		throw exception("Invalid passowrd");
-
-	delete[] this->password;
-	this->password = new char[strlen(pass) + 1];
-	strcpy_s(this->password, strlen(pass) + 1, pass);
+	{
+		return 1;
+	}
+	return 0;
 }
 
-	void UserClass::saveUser(const string fileName)
+void UserClass::setUserName(const string name) {
+	if (UserClass::checkUserName(name) == 0)
+		this->userName = name;
+}
+void UserClass::setPassword(const char* pass) {
+	if (UserClass::checkPassword(pass) == 0)
 	{
-		if (this->checkUserName(fileName) == 1)
-		{
-			system("cls");
-			cout << endl << "Succesfully created new account." << endl;
+		delete[] this->password;
+		this->password = new char[strlen(pass) + 1];
+		strcpy_s(this->password, strlen(pass) + 1, pass);
+	}
+}
+
+	void UserClass::saveUser()
+	{
 			ofstream file;
-			file.open(fileName, ios::app, ios::binary);
+			file.open(UserClass::USERFILE, ios::app, ios::binary);
 
 			int nameSize = (this->userName).size() + 1;
 			int passSize = strlen(this->password) + 1;
@@ -56,23 +104,19 @@ void UserClass::setPassword(const char* pass) {
 			file.write(this->password, passSize);
 
 			file.close();
-		}
-		else
-		{
+			//UserClass::noRegisteredUsers++;
 			system("cls");
-			throw exception("Existing username");
-		}
-		
+			cout << endl << "Succesfully created new account." << endl;
 	}
 
-	void UserClass::checkUser(const string fileName)
+	void UserClass::checkUser()
 	{
 		bool test = 0;
-		int sizeUser, sizePass;
+		int sizeUser=0, sizePass=0;
 		char* usernameArr = nullptr, * passwordArr = nullptr;
 
 		ifstream file;
-		file.open(fileName, ios::in, ios::binary);
+		file.open(UserClass::USERFILE, ios::in, ios::binary);
 
 		while (!file.eof()) 
 		{
@@ -109,44 +153,7 @@ void UserClass::setPassword(const char* pass) {
 
 	}
 
-	bool UserClass::checkUserName(const string fileName) {
-		bool test = 0;
-		int sizeUser, sizePass;
-		char* usernameArr = nullptr, * passwordArr = nullptr;
-		ifstream file;
-		file.open(fileName, ios::in, ios::binary);
-
-		while (!file.eof()) {
-
-			file.read((char*)&sizeUser, sizeof(int));
-			usernameArr = new char[sizeUser];
-			file.read(usernameArr, sizeof(char) * sizeUser);
-
-			file.read((char*)&sizePass, sizeof(int));
-			passwordArr = new char[sizePass];
-			file.read(passwordArr, sizeof(char) * sizePass);
-
-			if (strcmp((this->userName).c_str(), usernameArr) == 0)
-			{
-				test = 1;
-			}
-			delete[] usernameArr;
-			delete[] passwordArr;
-		}
-
-		file.close();
-
-		if (test == 1)
-		{
-			//username taken
-			return 0;
-		}
-		else
-		{
-			//available username
-			return 1;
-		}
-	}
+	
 
 	UserTypes UserClass::getType() {
 		return this->type;
@@ -157,6 +164,7 @@ void UserClass::setPassword(const char* pass) {
 
 	}
 
+	//to be deleted
 	UserClass::UserClass(const char* pass) {
 		this->setPassword(pass);
 		if (strcmp(this->password, "Pass123") == 0)
@@ -173,15 +181,9 @@ void UserClass::setPassword(const char* pass) {
 		}
 	}
 
-	UserClass::UserClass(const string name, const char* pass, const string filename, AccountCommands command) {
+	UserClass::UserClass(const string name, const char* pass) {
 		this->setUserName(name);
 		this->setPassword(pass);
-
-		if (command == AccountCommands::CREATE)
-			this->saveUser(filename);
-		else if (command == AccountCommands::LOGIN)
-			this->checkUser(filename);
-
 		this->type = UserTypes::BASIC;
 	}
 

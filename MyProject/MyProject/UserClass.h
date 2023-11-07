@@ -12,33 +12,44 @@ enum class EventCommands {CREATE, VIEW, BUY, TICKET, QUIT};
 class UserClass {
 
 	string userName = "";
+	string email = "";
 	char* password = nullptr;
 	UserTypes type = UserTypes::GUEST;
+	int age = 0;
 
+	static int noRegisteredUsers;
+
+public:
+	//constexpr - ??
+	static constexpr char USERFILE[] = "users.dat";
 	static const int MIN_USER_SIZE = 4;
 	static const int MAX_USER_SIZE = 20;
 	static const int MIN_PSWD_SIZE = 6;
 	static const int MAX_PSWD_SIZE = 30;
 
+private:
 	void setUserName(const string name);
 
 	void setPassword(const char* pass);
 
-	void saveUser(const string fileName);
-
-	void checkUser(const string fileName);
-
-	bool checkUserName(const string fileName);
-
-
 public:
+	void saveUser();
+
+	void checkUser();
+
+	static bool checkUserName(string newUser);
+
+	static bool checkPassword(const char* pass);
+
+
+
 	UserTypes getType();
 
 	UserClass();
 
 	UserClass(const char* pass);
 
-	UserClass(const string name, const char* pass, const string filename, AccountCommands command);
+	UserClass(const string name, const char* pass);
 
 	UserClass(class UserClass* user);
 
@@ -46,3 +57,4 @@ public:
 
 	void operator=(UserClass source);
 };
+//int UserClass::noRegisteredUsers = 0;

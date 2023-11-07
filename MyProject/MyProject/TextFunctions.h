@@ -4,7 +4,7 @@
 #include "UserClass.h"
 using namespace std;
 
-const string USERFILE = "users.dat";
+
 
 char* transformInput(const char* word);
 
