@@ -14,5 +14,10 @@ int main()
 	printIntroduction();
 	UserClass user;
 	user.operator=(returnUser());
-	printCommands(user.getType());
+	EventCommands command{};
+	while(command != EventCommands::QUIT)
+	{
+		printCommands(user.getType());
+		command = getCommand(user.getType());
+	}
 }

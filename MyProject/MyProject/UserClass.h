@@ -8,7 +8,7 @@ using namespace std;
 
 enum class UserTypes { ADMIN, BASIC, GUEST };
 enum class AccountCommands {LOGIN, CREATE};
-enum class EventCommands {CREATE, VIEW, BUY, TICKET};
+enum class EventCommands {CREATE, VIEW, BUY, TICKET, QUIT};
 class UserClass {
 
 	string userName = "";

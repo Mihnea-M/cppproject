@@ -60,7 +60,6 @@ void UserClass::setPassword(const char* pass) {
 		else
 		{
 			system("cls");
-			cout << "Username already taken";
 			throw exception("Existing username");
 		}
 		
@@ -105,8 +104,7 @@ void UserClass::setPassword(const char* pass) {
 		if (test == 0)
 		{
 			system("cls");
-			cout << endl << "Invalid username/password!";
-			throw exception ("Log in failed");
+			throw exception ("Wrong username/password!");
 		}
 
 	}
@@ -152,6 +150,7 @@ void UserClass::setPassword(const char* pass) {
 
 	UserTypes UserClass::getType() {
 		return this->type;
+		
 	}
 
 	UserClass::UserClass() {
@@ -195,13 +194,18 @@ void UserClass::setPassword(const char* pass) {
 	}
 
 	void UserClass::operator=(UserClass source) {
-		this->userName = source.userName;
-		this->type = source.type;
 		if (this == &source)
 			return;
+		this->userName = source.userName;
+		this->type = source.type;
 		delete[] this->password;
-		this->password = new char[strlen(source.password) + 1];
-		strcpy_s(this->password, strlen(source.password) + 1, source.password);
+		if (source.password)
+		{
+			this->password = new char[strlen(source.password) + 1];
+			strcpy_s(this->password, strlen(source.password) + 1, source.password);
+		}
+		else
+			this->password = nullptr;
 		this->type = source.type;
 	}
 

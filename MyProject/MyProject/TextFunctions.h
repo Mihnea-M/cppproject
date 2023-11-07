@@ -13,3 +13,5 @@ void printIntroduction();
 UserClass returnUser();
 
 void printCommands(UserTypes type);
+
+EventCommands getCommand(UserTypes type);
