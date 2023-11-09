@@ -18,70 +18,124 @@ char* transformInput(const char* word)
 	return newWord;
 }
 
+UserClass readUser(UserTypes type, AccountCommands command) {
+	bool success = 0;
+	string username;
+	char* password = new char[20];
+	string email;
+	int age;
+
+	while (!success) 
+	{
+		switch (type)
+		{
+		case UserTypes::ADMIN:
+		{
+			break;
+		}
+		case UserTypes::BASIC:
+		{
+			switch (command)
+			{
+			case AccountCommands::LOGIN:
+			{
+				cout << "Enter username: ";
+				cin >> username;
+				cout << "Enter password: ";
+				cin >> password;
+				while (!success)
+				{
+					try
+					{
+						UserClass newUser (username, password);
+						if (newUser.checkUser() == 1)
+							success = 1;
+						delete[] password;
+						return &newUser;
+					}
+					catch (exception e) {
+						system("cls");
+						cout << endl << e.what() << endl << endl;
+						cout << "Enter username: ";
+						cin >> username;
+						cout << "Enter password: ";
+						cin >> password;
+					}
+				}
+				
+			}
+			case AccountCommands::CREATE:
+			{
+				cout << "New username: ";
+				cin >> username;
+				//if age < 14 print You are not allowed to use the platform, but due to limited budget you are not restricted access.
+				cout << "Your password must contain at least a capital letter, a small letter and a number. New password: ";
+				cin >> password;
+				cout << "Email: ";
+				cin >> email;
+				cout << "Age: ";
+				cin >> age;
+				while (!success)
+				{
+					try
+					{
+						UserClass newUser(username, password, email, age);
+						newUser.saveUser();
+						success = 1;
+						return &newUser;
+					}
+					catch (exception e) {
+						system("cls");
+						cout << endl << e.what() << endl << endl;
+						cout << "Enter username: ";
+						cin >> username;
+						cout << "Enter password: ";
+						cin >> password;
+						cout << "Email: ";
+						cin >> email;
+						cout << "Age: ";
+						cin >> age;
+					}
+				}
+			}
+			}
+		}
+		case UserTypes::GUEST:
+		{
+			UserClass newUser;
+			return &newUser;
+		}
+
+		}
+	}
+}
+
 void printIntroduction() {
 	cout << "Welcome to the ticketing application." << endl << endl;
 	cout << "Would you like to log in, create a new accout or join as a guest? (type \"login\", \"create\" or \"guest\")" << endl;
 }
 
+//tranform this function in the main loop which constantly waits for commands and processes them 
+//make 2 different cases: when you type event you get access to event commands, when you type account you get access to account commands
 UserClass returnUser() 
 {
 	string username;
+	string email;
 	char* password = new char[20];
 	char* response = new char[20];
 	while(1)
 	{
 		cin >> response;
-
+		system("cls");
 		response = transformInput(response);
 
 		if (strcmp(response, "login") == 0)
 		{
-					cout << "Enter username: ";
-					cin >> username;
-					while (UserClass::checkUserName(username))
-					{
-						system("cls");
-						cout << endl << "Invalid username. Try again: ";
-						cin >> username;
-
-					}
-					cout << "Enter password: ";
-					cin >> password;
-					while (UserClass::checkPassword(password))
-					{
-						cout << endl << "Invalid password. Try again: ";
-						cin >> password;
-					}
-					UserClass newUser(username, password);
-					delete[] response;
-					delete[] password;
-					return newUser;
-
+			return readUser(UserTypes::BASIC, AccountCommands::LOGIN);
 		}
 		else if (strcmp(response, "create") == 0)
 		{
-			cout << "New username: ";
-			cin >> username;
-			while (UserClass::checkUserName(username))
-			{
-				system("cls");
-				cout << endl << "Invalid username. Try again: ";
-				cin >> username;
-
-			}
-			//citire email si varsta
-			cout << "Your password must contain at least a capital letter, a small letter and a number. New password: ";
-			cin >> password;
-			while (UserClass::checkPassword(password))
-			{
-				cout << endl << "Invalid password. Try again: ";
-				cin >> password;
-			}
-			UserClass newUser(username, password);
-			newUser.saveUser();
-			delete[] response;
-			delete[] password;
-			return newUser;
+			return readUser(UserTypes::BASIC, AccountCommands::CREATE);
 		}
 		else if (strcmp(response, "admin") == 0) {
 			cout << "Enter admin password: ";

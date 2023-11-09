@@ -26,24 +26,39 @@ public:
 	static const int MAX_USER_SIZE = 20;
 	static const int MIN_PSWD_SIZE = 6;
 	static const int MAX_PSWD_SIZE = 30;
+	static const int MIN_EMAIL_SIZE = 7;
+	static const int MAX_EMAIL_SIZE = 30;
 
 private:
 	void setUserName(const string name);
 
 	void setPassword(const char* pass);
 
+	void setEmail(const string email);
+
+	void setAge(int age);
+
 public:
 	void saveUser();
 
-	void checkUser();
+	bool checkUser();
+	
+	void printInfo();
 
-	static bool checkUserName(string newUser);
+	//get email, get account info
+
+	static bool checkCredentialAvaliability(string newUser, string email);
 
 	static bool checkPassword(const char* pass);
 
+	static bool checkEmail(string newEmail);
 
+	//static UserClass readUserFromFile(ifstream file);
 
 	UserTypes getType();
+
+
+	//Constructors
 
 	UserClass();
 
@@ -51,10 +66,12 @@ public:
 
 	UserClass(const string name, const char* pass);
 
-	UserClass(class UserClass* user);
+	UserClass(const string name, const char* pass, const string email, int age);
+	
+	UserClass(const UserClass* user);
 
 	~UserClass();
 
 	void operator=(UserClass source);
 };
-//int UserClass::noRegisteredUsers = 0;
+

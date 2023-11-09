@@ -8,6 +8,8 @@ using namespace std;
 
 char* transformInput(const char* word);
 
+UserClass readUser(UserTypes type, AccountCommands command);
+
 void printIntroduction();
 
 UserClass returnUser();
