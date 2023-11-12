@@ -18,7 +18,7 @@ char* transformInput(const char* word)
 	return newWord;
 }
 
-UserClass readUser(UserTypes type, AccountCommands command) {
+UserClass readUser(UserTypes type, AccountCommands command = AccountCommands::CREATE) {
 	bool success = 0;
 	string username;
 	char* password = new char[20];
@@ -31,7 +31,24 @@ UserClass readUser(UserTypes type, AccountCommands command) {
 		{
 		case UserTypes::ADMIN:
 		{
-			break;
+			cout << "Enter admin password: ";
+			cin >> password;
+			try
+			{
+				UserClass newUser(password);
+				newUser.checkAdminPass();
+				delete[] password;
+				system("cls");
+				cout << endl << "Logged in as admin." << endl;
+				return &newUser;
+			}
+			catch (exception e) {
+				system("cls");
+				cout << endl << e.what() << endl << endl << "Logging is as guest." << endl;
+				UserClass newUser;
+				return &newUser;
+			}
+
 		}
 		case UserTypes::BASIC:
 		{
@@ -48,12 +65,22 @@ UserClass readUser(UserTypes type, AccountCommands command) {
 					try
 					{
 						UserClass newUser (username, password);
-						if (newUser.checkUser() == 1)
-							success = 1;
+						newUser.checkUser();
 						delete[] password;
+						success = 1;
+						system("cls");
+						cout << endl << "Succesfully logged in." << endl;
 						return &newUser;
+						
 					}
 					catch (exception e) {
+						if (strcmp(e.what(), "Data file not found") == 0)
+						{
+							system("cls");
+							cout << endl << e.what() << endl << endl << "Logging is as guest." << endl;
+							UserClass newUser;
+							return &newUser;
+						}
 						system("cls");
 						cout << endl << e.what() << endl << endl;
 						cout << "Enter username: ";
@@ -82,6 +109,8 @@ UserClass readUser(UserTypes type, AccountCommands command) {
 						UserClass newUser(username, password, email, age);
 						newUser.saveUser();
 						success = 1;
+						system("cls");
+						cout << endl << "Succesfully created new account." << endl;
 						return &newUser;
 					}
 					catch (exception e) {
@@ -103,9 +132,9 @@ UserClass readUser(UserTypes type, AccountCommands command) {
 		case UserTypes::GUEST:
 		{
 			UserClass newUser;
+			cout << "Logged is as guest."<< endl;
 			return &newUser;
 		}
-
 		}
 	}
 }
@@ -119,9 +148,7 @@ void printIntroduction() {
 //make 2 different cases: when you type event you get access to event commands, when you type account you get access to account commands
 UserClass returnUser() 
 {
-	string username;
-	string email;
-	char* password = new char[20];
+
 	char* response = new char[20];
 	while(1)
 	{
@@ -131,28 +158,20 @@ UserClass returnUser()
 
 		if (strcmp(response, "login") == 0)
 		{
+			
 			return readUser(UserTypes::BASIC, AccountCommands::LOGIN);
 		}
 		else if (strcmp(response, "create") == 0)
 		{
+			
 			return readUser(UserTypes::BASIC, AccountCommands::CREATE);
 		}
 		else if (strcmp(response, "admin") == 0) {
-			cout << "Enter admin password: ";
-			cin >> password;
-			UserClass newUser(password);
-			delete[] response;
-			delete[] password;
-			return newUser;
+			return readUser(UserTypes::ADMIN);
 		}
 		else if (strcmp(response, "guest") == 0)
-		{
-			UserClass newUser;
-			delete[] response;
-			delete[] password;
-			system("cls");
-			cout << "Logged is as guest.";
-			return newUser;
+		{	
+			return readUser(UserTypes::GUEST);
 		}
 		//system("cls");
 		cout << "Please provide a valid input!" << endl << endl;

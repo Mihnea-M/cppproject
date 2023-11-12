@@ -2,9 +2,9 @@
 #include <fstream>
 #include <string.h>
 #include <string>
-
 #include "UserClass.h"
 #include "TextFunctions.h"
+#include "LocationClass.h"
 using namespace std;
 
 //for future implementation - https://developers.google.com/maps/documentation/geocoding
@@ -14,7 +14,7 @@ using namespace std;
 
 int main()
 {
-	printIntroduction();
+	/*printIntroduction();
 	UserClass user;
 	user.operator=(returnUser());
 	EventCommands command{};
@@ -22,5 +22,8 @@ int main()
 	{
 		printCommands(user.getType());
 		command = getCommand(user.getType());
-	}
+	}*/
+	LocationClass loc;
+	loc.addressToCoord("test");
+	loc.generateAndPrintLink();
 }

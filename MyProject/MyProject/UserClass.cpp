@@ -31,44 +31,54 @@ void UserClass::setEmail(const string email) {
 		throw exception("Invalid email");
 }
 
-	void UserClass::saveUser()
+void UserClass::setAge(int age)
+{
+	if (age<UserClass::MIN_AGE || age > UserClass::MAX_AGE)
+		throw exception("Invalid age");
+	else
+		this->age = age;
+}
+
+void UserClass::saveUser()
+{
+	if (UserClass::checkCredentialAvaliability(this->userName, this->email) == 1)
 	{
-		/*if (UserClass::checkCredentialAvaliability(this->userName, this->email) == 1)
-		{
-			throw exception("Username or email taken");
-		}
-		else
-		{*/
-			ofstream file;
-			file.open(UserClass::USERFILE, ios::app, ios::binary);
-
-			int nameSize = (this->userName).size() + 1;
-			int passSize = strlen(this->password) + 1;
-			int emailSize = (this->email).size() + 1;
-
-			//saving username size and username
-			file.write((char*)&nameSize, sizeof(int));
-			file.write((this->userName).c_str(), nameSize);
-
-			//saving password size and password
-			file.write((char*)&passSize, sizeof(int));
-			file.write(this->password, passSize);
-
-			//saving emailsize and email
-			file.write((char*)&emailSize, sizeof(int));
-			file.write((this->email).c_str(), emailSize);
-
-			//saving age
-			file.write((char*)(&this->age), sizeof(int));
-
-			file.close();
-
-			UserClass::noRegisteredUsers++;
-
-			system("cls");
-			cout << endl << "Succesfully created new account." << endl;
-		//}
+		throw exception("Username or email taken");
 	}
+	else
+	{
+		//setting the user as being logged in
+		this->type = UserTypes::BASIC;
+
+		ofstream file;
+		file.open(UserClass::USERFILE, ios::app, ios::binary);
+
+		int nameSize = (this->userName).size() + 1;
+		int passSize = strlen(this->password) + 1;
+		int emailSize = (this->email).size() + 1;
+
+		//saving username size and username
+		file.write((char*)&nameSize, sizeof(int));
+		file.write((this->userName).c_str(), nameSize);
+
+		//saving password size and password
+		file.write((char*)&passSize, sizeof(int));
+		file.write(this->password, passSize);
+
+		//saving emailsize and email
+		file.write((char*)&emailSize, sizeof(int));
+		file.write((this->email).c_str(), emailSize);
+
+		//saving age
+		file.write((char*)(&this->age), sizeof(int));
+
+		file.close();
+
+		UserClass::noRegisteredUsers++;
+
+
+	}
+}
 
 	/*
 	UserClass UserClass::readUserFromFile(ifstream file){
@@ -97,7 +107,7 @@ void UserClass::setEmail(const string email) {
 		//memory leak?? from transforming the char array into a string?
 	}
 	*/
-	bool UserClass::checkUser()
+	void UserClass::checkUser()
 	{
 		bool test = 0;
 		int sizeUser=0, sizePass=0, sizeEmail = 0;
@@ -106,49 +116,44 @@ void UserClass::setEmail(const string email) {
 
 		ifstream file;
 		file.open(UserClass::USERFILE, ios::in, ios::binary);
-
-		while (!file.eof()) 
+		if (file.is_open())
 		{
-			//reading size of username and username
-			file.read((char*)&sizeUser, sizeof(int));
-			usernameArr = new char[sizeUser];
-			file.read(usernameArr, sizeof(char) * sizeUser);
-
-			//reading size of password and password
-			file.read((char*)&sizePass, sizeof(int));
-			passwordArr = new char[sizePass];
-			file.read(passwordArr, sizeof(char) * sizePass);
-
-			//reading size of email and email
-			file.read((char*)&sizeEmail, sizeof(int));
-			emailArr = new char[sizeEmail];
-			file.read(emailArr, sizeof(char) * sizeEmail);
-
-			//reading age
-			file.read((char*)&age, sizeof(int));
-
-			//checking if the log in credentials are correct
-			if (strcmp((this->userName).c_str(), usernameArr) == 0 && strcmp(this->password, passwordArr) == 0)
+			while (!file.eof())
 			{
-				test = 1;
-				this->type = UserTypes::BASIC;
-				system("cls");
-				cout << endl << "Succesfully logged in." << endl;
+				//reading size of username and username
+				file.read((char*)&sizeUser, sizeof(int));
+				usernameArr = new char[sizeUser];
+				file.read(usernameArr, sizeof(char) * sizeUser);
+
+				//reading size of password and password
+				file.read((char*)&sizePass, sizeof(int));
+				passwordArr = new char[sizePass];
+				file.read(passwordArr, sizeof(char) * sizePass);
+
+				//reading size of email and email
+				file.read((char*)&sizeEmail, sizeof(int));
+				emailArr = new char[sizeEmail];
+				file.read(emailArr, sizeof(char) * sizeEmail);
+
+				//reading age
+				file.read((char*)&age, sizeof(int));
+
+				//checking if the log in credentials are correct
+				if (strcmp((this->userName).c_str(), usernameArr) == 0 && strcmp(this->password, passwordArr) == 0)
+				{
+					this->type = UserTypes::BASIC;
+					return;
+				}
+
+				delete[] usernameArr;
+				delete[] passwordArr;
 			}
-
-			delete[] usernameArr;
-			delete[] passwordArr;
-		}
-
-		file.close();
-
-		if (test == 0)
-		{
-			return 1;
 		}
 		else
-			return 0;
+			throw exception("Data file not found");
 
+		file.close();
+		throw exception("Invalid username or password!");
 	}
 
 	//Validate if username is valid and available
@@ -161,41 +166,43 @@ void UserClass::setEmail(const string email) {
 
 		ifstream file;
 		file.open(UserClass::USERFILE, ios::in, ios::binary);
-
-		while (!file.eof())
+		if (file.is_open())
 		{
-			//reading size of username and username
-			file.read((char*)&sizeUser, sizeof(int));
-			usernameArr = new char[sizeUser];
-			file.read(usernameArr, sizeof(char) * sizeUser);
-
-			//reading size of password and password
-			file.read((char*)&sizePass, sizeof(int));
-			passwordArr = new char[sizePass];
-			file.read(passwordArr, sizeof(char) * sizePass);
-
-			//reading size of email and email
-			file.read((char*)&sizeEmail, sizeof(int));
-			emailArr = new char[sizeEmail];
-			file.read(emailArr, sizeof(char) * sizeEmail);
-
-			//reading age
-			file.read((char*)&age, sizeof(int));
-
-			//checking if the log in credentials are correct
-			if (strcmp(newUser.c_str(), usernameArr) == 0)
+			while (!file.eof())
 			{
-				//Username taken
-				return 1;
+				//reading size of username and username
+				file.read((char*)&sizeUser, sizeof(int));
+				usernameArr = new char[sizeUser];
+				file.read(usernameArr, sizeof(char) * sizeUser);
+
+				//reading size of password and password
+				file.read((char*)&sizePass, sizeof(int));
+				passwordArr = new char[sizePass];
+				file.read(passwordArr, sizeof(char) * sizePass);
+
+				//reading size of email and email
+				file.read((char*)&sizeEmail, sizeof(int));
+				emailArr = new char[sizeEmail];
+				file.read(emailArr, sizeof(char) * sizeEmail);
+
+				//reading age
+				file.read((char*)&age, sizeof(int));
+
+				//checking if the log in credentials are correct
+				if (strcmp(newUser.c_str(), usernameArr) == 0)
+				{
+					//Username taken
+					return 1;
+				}
+				if (strcmp(newEmail.c_str(), emailArr) == 0)
+				{
+					//Email taken
+					return 1;
+				}
+
 			}
-			if (strcmp(newEmail.c_str(), emailArr) == 0)
-			{
-				//Email taken
-				return 1;
-			}
-	
+			file.close();
 		}
-		file.close();
 		return 0;
 	}
 
@@ -228,6 +235,20 @@ void UserClass::setEmail(const string email) {
 		return 0;
 	}
 
+
+	void UserClass::checkAdminPass() {
+		if (strcmp(this->password, "Pass123") == 0)
+		{
+			this->userName = "Admin";
+			this->type = UserTypes::ADMIN;
+			
+		}
+		else
+		{
+			throw exception("Wrong admin password.");
+		}
+	}
+
 	bool UserClass::checkEmail(string newEmail) {
 		if (newEmail.length() < UserClass::MIN_EMAIL_SIZE || newEmail.length() > UserClass::MAX_EMAIL_SIZE || newEmail.find('@') == string::npos)
 		{
@@ -238,8 +259,18 @@ void UserClass::setEmail(const string email) {
 	}
 
 	void UserClass::printInfo() {
-		cout << endl << "--------------------";
-		cout << this->userName << endl << this->email;
+		if (this->type == UserTypes::BASIC)
+		{
+			system("cls");
+			cout << endl << "--------------------------------" << endl;
+			cout <<"Username: " << this->userName << endl << "Email: " << this->email << endl << "Age: " << this->age;
+			cout << endl << "--------------------------------" << endl;
+		}
+		else
+		{
+			system("cls");
+			cout << (this->type == UserTypes::ADMIN) ? "You are logged in as admin": "You are logged in as guest";
+		}
 	}
 
 	UserTypes UserClass::getType() {
@@ -256,38 +287,27 @@ void UserClass::setEmail(const string email) {
 	//to be deleted
 	UserClass::UserClass(const char* pass) {
 		this->setPassword(pass);
-		if (strcmp(this->password, "Pass123") == 0)
-		{
-			this->userName = "Admin";
-			this->type = UserTypes::ADMIN;
-			system("cls");
-			cout << endl << "Logged in as admin." << endl;
-		}
-		else
-		{
-			system("cls");
-			cout << "Wrong password. Logging is as guest.";
-		}
 	}
 
 	UserClass::UserClass(const string name, const char* pass) {
 			this->setUserName(name);
 			this->setPassword(pass);
-			this->type = UserTypes::BASIC;
 	}
 
 	UserClass::UserClass(const string name, const char* pass, const string email, int age) {
 			this->setUserName(name);
 			this->setPassword(pass);
 			this->setEmail(email);
-			this->age = age; //TO DO: validation
-			this->type = UserTypes::BASIC;
+			this->age = age;
 	}
 
 	UserClass::UserClass(const UserClass* user) {
 		delete[] this->password;
-		this->password = new char[strlen(user->password) + 1];
-		strcpy_s(this->password, strlen(user->password) + 1, user->password);
+		if (user->password != nullptr)
+		{
+			this->password = new char[strlen(user->password) + 1];
+			strcpy_s(this->password, strlen(user->password) + 1, user->password);
+		}
 		this->type = user->type;
 		this->userName = user->userName;
 		this->age = user->age;
