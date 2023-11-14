@@ -9,5 +9,7 @@ class CreateAccount : UserValidation {
 public:
 	static UserClass* newUser(const string username, const string email, const char* password, const int age);
 
+	static UserClass* createGuest();
+
 };
 

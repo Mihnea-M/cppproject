@@ -6,5 +6,8 @@ class LogIn : UserValidation
 {
 public:
 	static UserClass* logIn(const string name, const char* password);
+
+	static UserClass* adminLogIn(const char* password);
+
 };
 

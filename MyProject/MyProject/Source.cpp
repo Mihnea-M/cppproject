@@ -2,8 +2,7 @@
 #include <fstream>
 #include <string.h>
 #include <string>
-#include "CreateAccount.h"
-//#include "UserClass.h"
+#include "UserClass.h"
 #include "TextFunctions.h"
 #include "LocationClass.h"
 using namespace std;
@@ -16,13 +15,14 @@ int main()
 {
 
 	printIntroduction();
-	UserClass user;
-	user.operator=(returnUser());
+	UserClass *user = nullptr;
+	cin >> &user;
+	cout << user;
 	EventCommands command{};
 	while(command != EventCommands::QUIT)
 	{
-		printCommands(user.getType());
-		command = getCommand(user.getType());
+		printCommands(user->getType());
+		command = getCommand(user->getType());
 	}
 	//LocationClass loc;
 	//loc.addressToCoord("test");
