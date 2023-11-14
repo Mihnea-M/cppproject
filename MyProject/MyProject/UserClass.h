@@ -4,13 +4,23 @@
 #include <string.h>
 #include <fstream>
 #include <iostream>
+
+#include "UserValidation.h"
+#include "CreateAccount.h"
+#include "LogIn.h"
+
+
 using namespace std;
 
 enum class UserTypes { ADMIN, BASIC, GUEST };
 enum class AccountCommands {LOGIN, CREATE};
 enum class EventCommands {CREATE, VIEW, BUY, TICKET, QUIT};
 
+
 class UserClass {
+
+	friend class CreateAccount;
+	friend class LogIn;
 
 	string userName = "";
 	string email = "";
@@ -21,7 +31,6 @@ class UserClass {
 	static int noRegisteredUsers;
 
 public:
-	//constexpr - ??
 	static constexpr char USERFILE[] = "users.dat";
 	static const int MIN_USER_SIZE = 4;
 	static const int MAX_USER_SIZE = 20;
@@ -53,13 +62,11 @@ public:
 	//if not it throws exception
 	void checkUser();
 	
-	//prints the info of a user (without password)
-	void printInfo();
 
 	//checks if the username and email are already taken
 	//returns 1 if not available
 	//0 otherwise
-	static bool checkCredentialAvaliability(string newUser, string email);
+	static bool checkCredentialAvaliability(string newUser, string newEmail);
 
 	//validation for password
 	// 1 - invalid password
@@ -78,6 +85,12 @@ public:
 
 	//static UserClass readUserFromFile(ifstream file);
 
+	string getUsername();
+
+	string getEmail();
+
+	int getAge();
+
 	//returns the user type
 	UserTypes getType();
 
@@ -91,7 +104,10 @@ public:
 	UserClass(const string name, const char* pass);
 
 	UserClass(const string name, const char* pass, const string email, int age);
-	
+private:
+	//all constructors (besides the default constructors should be private)
+	UserClass(const string name, const string email, const char* pass, int age);
+public:
 	UserClass(const UserClass* user);
 
 	~UserClass();
@@ -99,3 +115,6 @@ public:
 	void operator=(UserClass source);
 };
 
+void operator<<(ostream& console, UserClass *user);
+
+void operator<<(ofstream& file, UserClass* user);

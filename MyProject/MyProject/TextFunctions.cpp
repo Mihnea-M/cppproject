@@ -1,5 +1,6 @@
 #include "TextFunctions.h"
 
+
 char* transformInput(const char* word)
 {
 	char* newWord;
@@ -79,7 +80,7 @@ UserClass readUser(UserTypes type, AccountCommands command = AccountCommands::CR
 							system("cls");
 							cout << endl << e.what() << endl << endl << "Logging is as guest." << endl;
 							UserClass newUser;
-							return &newUser;
+							return newUser;
 						}
 						system("cls");
 						cout << endl << e.what() << endl << endl;
@@ -106,12 +107,14 @@ UserClass readUser(UserTypes type, AccountCommands command = AccountCommands::CR
 				{
 					try
 					{
-						UserClass newUser(username, password, email, age);
-						newUser.saveUser();
+						UserClass* newUser;
+						newUser = CreateAccount::newUser(username, email, password, age);
+						//newUser.saveUser();
 						success = 1;
+						//UserClass newUser(username, password, email, age);
 						system("cls");
 						cout << endl << "Succesfully created new account." << endl;
-						return &newUser;
+						return newUser;
 					}
 					catch (exception e) {
 						system("cls");

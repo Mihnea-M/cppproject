@@ -2,7 +2,8 @@
 #include <fstream>
 #include <string.h>
 #include <string>
-#include "UserClass.h"
+#include "CreateAccount.h"
+//#include "UserClass.h"
 #include "TextFunctions.h"
 #include "LocationClass.h"
 using namespace std;
@@ -11,10 +12,10 @@ using namespace std;
 //http://www.google.com/maps/place/lat,lng
 
 
-
 int main()
 {
-	/*printIntroduction();
+
+	printIntroduction();
 	UserClass user;
 	user.operator=(returnUser());
 	EventCommands command{};
@@ -22,8 +23,8 @@ int main()
 	{
 		printCommands(user.getType());
 		command = getCommand(user.getType());
-	}*/
-	LocationClass loc;
-	loc.addressToCoord("test");
-	loc.generateAndPrintLink();
+	}
+	//LocationClass loc;
+	//loc.addressToCoord("test");
+	//loc.generateAndPrintLink();
 }

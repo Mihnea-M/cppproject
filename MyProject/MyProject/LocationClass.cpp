@@ -49,6 +49,9 @@ void LocationClass::addZoze(string zoneName, int zoneNoSeat) {
 	this->noZones++;
 	this->zoneNames = tempNames;
 	this->zoneNoSeats = tempNo;
+
+	delete[] tempNames;
+	delete[] tempNo;
 }
 
 void LocationClass::addressToCoord(const string address) {
@@ -67,13 +70,32 @@ LocationClass::LocationClass()
 
 }
 
-LocationClass::LocationClass(char* name, int noZones, string* zoneNames, int* zoneNoSeats) {
+LocationClass::LocationClass(char* name, int noZones, string* zoneNames, int* zoneNoSeats, string address) {
 	this->setName(name);
 	this->setZones(noZones, zoneNames, zoneNoSeats);
+	this->addressToCoord(address);
 }
 
 LocationClass::~LocationClass() {
 	delete[] this->name;
 	delete[] this->zoneNames;
 	delete[] this->zoneNoSeats;
+}
+
+LocationClass::LocationClass(const LocationClass* source) {
+	this->name = new char[strlen(source->name) + 1];
+	strcpy_s(this->name, strlen(source->name) + 1, source->name);
+
+	this->noZones = source->noZones;
+
+	this->zoneNames = new string[this->noZones];
+	for (int i = 0; i < this->noZones; i++) {
+		this->zoneNames[i] = source->zoneNames[i];
+	}
+
+	this->zoneNoSeats = new int[this->noZones];
+	memcpy(this->zoneNoSeats, source->zoneNoSeats, sizeof(int) * this->noZones);
+
+	this->lat = source->lat;
+	this->lon = source->lon;
 }

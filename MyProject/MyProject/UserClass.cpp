@@ -258,19 +258,17 @@ void UserClass::saveUser()
 		return 0;
 	}
 
-	void UserClass::printInfo() {
-		if (this->type == UserTypes::BASIC)
-		{
-			system("cls");
-			cout << endl << "--------------------------------" << endl;
-			cout <<"Username: " << this->userName << endl << "Email: " << this->email << endl << "Age: " << this->age;
-			cout << endl << "--------------------------------" << endl;
-		}
-		else
-		{
-			system("cls");
-			cout << (this->type == UserTypes::ADMIN) ? "You are logged in as admin": "You are logged in as guest";
-		}
+
+	string UserClass::getUsername() {
+		return this->userName;
+	}
+
+	string UserClass::getEmail() {
+		return this->email;
+	}
+
+	int UserClass::getAge() {
+		return this->age;
 	}
 
 	UserTypes UserClass::getType() {
@@ -299,6 +297,14 @@ void UserClass::saveUser()
 			this->setPassword(pass);
 			this->setEmail(email);
 			this->age = age;
+	}
+
+	UserClass::UserClass(const string name, const string email, const char* pass, int age) {
+		this->setUserName(name);
+		this->setPassword(pass);
+		this->setEmail(email);
+		this->setAge(age);
+		this->type = UserTypes::BASIC;
 	}
 
 	UserClass::UserClass(const UserClass* user) {
@@ -334,4 +340,19 @@ void UserClass::saveUser()
 
 	UserClass::~UserClass() {
 		delete[]this->password;
+	}
+
+	void operator<<(ostream& console, UserClass* user) {
+		if (user->getType() == UserTypes::BASIC)
+		{
+			system("cls");
+			cout << endl << "--------------------------------" << endl;
+			cout << "Username: " << user->getUsername() << endl << "Email: " << user->getEmail() << endl << "Age: " << user->getAge();
+			cout << endl << "--------------------------------" << endl;
+		}
+		else
+		{
+			system("cls");
+			cout << endl << ((user->getType() == UserTypes::ADMIN) ? "You are logged in as admin" : "You are logged in as guest") << endl;
+		}
 	}

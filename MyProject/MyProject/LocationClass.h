@@ -29,8 +29,10 @@ public:
 
 	LocationClass();
 
-	LocationClass(char* name, int noZones, string* zoneNames, int* zoneNoSeats);
+	LocationClass(char* name, int noZones, string* zoneNames, int* zoneNoSeats, string address);
 
 	~LocationClass();
+
+	LocationClass(const LocationClass* source);
 };
 
