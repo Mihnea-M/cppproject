@@ -194,8 +194,9 @@ UserClass* readUser(AccountCommands command) {
 	}
 }
 
-
-
+void operator>>(istream& console, UserClass** user) {
+	*user = readUser(returnAccountCommands());
+}
 
 
 EventCommands getCommand(UserTypes type) {
@@ -254,6 +255,3 @@ EventCommands getCommand(UserTypes type) {
 	}
 }
 
-void operator>>(istream& console, UserClass** user) {
-	*user = readUser(returnAccountCommands());
-}

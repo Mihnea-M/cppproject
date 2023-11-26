@@ -59,10 +59,6 @@ public:
 	int getAge();
 
 	UserTypes getType();
-
-
-	//default constructor - the only way to create a new user, which will be automatically assigned as guest
-	//if you want other users you need to log in
 	
 
 	//cpy constructor
