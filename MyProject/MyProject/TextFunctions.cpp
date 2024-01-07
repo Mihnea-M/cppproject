@@ -25,24 +25,26 @@ void printIntroduction() {
 }
 
 void printCommands(UserTypes type) {
-
 	switch (type)
 	{
 	case UserTypes::ADMIN:
 	{
 		cout << endl << "Type \"Create\" to create an event, \"view\" to see all available events, \"buy\" to buy a ticket or \"ticket\" to view an existing ticket." << endl;
+		cout << "Type \"user\" to view user information" << endl;
 		cout << "You can also type \"quit\" to exit." << endl;
 		break;
 	}
 	case UserTypes::BASIC:
 	{
 		cout << endl << "Type \"view\" to see all available events, \"buy\" to buy a ticket or \"ticket\" to view an existing ticket." << endl;
+		cout << "Type \"user\" to view user information" << endl;
 		cout << "You can also type \"quit\" to exit." << endl;
 		break;
 	}
 	case UserTypes::GUEST:
 	{
 		cout << endl << "Type \"view\" to see all available events or \"ticket\" to view an existing ticket." << endl;
+		cout << "Type \"user\" to view user information" << endl;
 		cout << "You can also type \"quit\" to exit." << endl;
 		break;
 	}
@@ -194,64 +196,37 @@ UserClass* readUser(AccountCommands command) {
 	}
 }
 
-void operator>>(istream& console, UserClass** user) {
-	*user = readUser(returnAccountCommands());
-}
+
+//void operator>>(istream& console, UserClass** user) {
+//	*user = readUser(returnAccountCommands());
+//}
 
 
 EventCommands getCommand(UserTypes type) {
 	string command;
 	cin >> command;
 	command = transformInput(command.c_str());
-	if (command == "quit")
-		return EventCommands::QUIT;
-	if (type == UserTypes::ADMIN)
-	{
-		while (1) {
-			if (command == "create")
-				return EventCommands::CREATE;
-			else if (command == "view")
-				return EventCommands::VIEW;
-			else if (command == "buy")
-				return EventCommands::BUY;
-			else if (command == "ticket")
-				return EventCommands::TICKET;
-			system("cls");
-			cout << endl << "Please provide a valid input." << endl;
-			printCommands(type);
-			cin >> command;
-			command = transformInput(command.c_str());
-		}
+	
+	while (1) {
+		if (command == "quit")
+			return EventCommands::QUIT;
+		else if (command == "create" && type == UserTypes::ADMIN)
+			return EventCommands::CREATE;
+		else if (command == "view")
+			return EventCommands::VIEW;
+		else if (command == "buy" && type != UserTypes::GUEST)
+			return EventCommands::BUY;
+		else if (command == "ticket")
+			return EventCommands::TICKET;
+		else if (command == "user")
+			return EventCommands::USER;
+		system("cls");
+		cout << endl << "Please provide a valid input." << endl;
+		printCommands(type);
+		cin >> command;
+		command = transformInput(command.c_str());
 	}
-	else if (type == UserTypes::BASIC)
-	{
-		while (1) {
-			 if (command == "view")
-				return EventCommands::VIEW;
-			else if (command == "buy")
-				return EventCommands::BUY;
-			else if (command == "ticket")
-				return EventCommands::TICKET;
-			system("cls");
-			cout << endl << "Please provide a valid input." << endl;
-			printCommands(type);
-			cin >> command;
-			command = transformInput(command.c_str());
-		}
-	}
-	else if (type == UserTypes::GUEST)
-	{
-		while (1) {
-			if (command == "view")
-				return EventCommands::VIEW;
-			else if (command == "ticket")
-				return EventCommands::TICKET;
-			system("cls");
-			cout << endl << "Please provide a valid input." << endl;
-			printCommands(type);
-			cin >> command;
-			command = transformInput(command.c_str());
-		}
-	}
+	
+	
 }
 

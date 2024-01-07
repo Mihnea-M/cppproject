@@ -14,7 +14,7 @@ using namespace std;
 
 enum class UserTypes { ADMIN, BASIC, GUEST };
 enum class AccountCommands {LOGIN, CREATE, ADMIN, GUEST};
-enum class EventCommands {CREATE, VIEW, BUY, TICKET, QUIT};
+enum class EventCommands {CREATE, VIEW, BUY, TICKET, USER, QUIT};
 
 
 class UserClass {
@@ -22,6 +22,7 @@ class UserClass {
 	friend class CreateAccount;
 	friend class LogIn;
 
+	const int userId;
 	string userName = "";
 	string email = "";
 	char* password = nullptr;
@@ -44,13 +45,15 @@ class UserClass {
 
 	UserClass();
 
-	UserClass(const string name, const char* pass, const string email, int age);
+	/*UserClass(const string name, const char* pass, const string email, int age);*/
 
-	UserClass(const string name, const string email, const char* pass, int age);
+	UserClass(const int id, const string name, const string email, const char* pass, int age);
 
 public:
 
 	//static UserClass readUserFromFile(ifstream file);
+
+	int getId();
 
 	string getUsername();
 

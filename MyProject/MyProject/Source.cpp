@@ -1,11 +1,12 @@
-#include <iostream>
-#include <fstream>
-#include <string.h>
-#include <string>
-#include "UserClass.h"
-#include "TextFunctions.h"
-#include "LocationClass.h"
-#include "EventClass.h"
+//#include <iostream>
+//#include <fstream>
+//#include <string.h>
+//#include <string>
+//#include "UserClass.h"
+//#include "TextFunctions.h"
+//#include "LocationClass.h"
+//#include "EventClass.h"
+#include "Console.h"
 using namespace std;
 
 //for future implementation - https://developers.google.com/maps/documentation/geocoding
@@ -17,16 +18,10 @@ using namespace std;
 
 int main()
 {
-	printIntroduction();
-	UserClass *user = nullptr;
-	cin >> &user;
-	cout << user;
-	/*EventCommands command{};
-	while(command != EventCommands::QUIT)
-	{
-		printCommands(user->getType());
-		command = getCommand(user->getType());
-	}*/
+	Console console;
+	console.start();
+	
+	/*
 	string zones[] = { "Row 1", "Row 2" };
 	int noSeats[] = { 10, 20 };
 	LocationClass loc("stadium", 2, zones, noSeats, "Bucharest"); 
@@ -44,7 +39,8 @@ int main()
 	loc.addZoze("Vip2", 3);
 	EventClass event2("The other football game", "12.11.2023", "11:11", loc);
 	if (event > event2)
-		cout << event.getName() << " has more total seats than" << event2.getName();
+		cout << event.getName() << " has more total seats than " << event2.getName();
 	else
-		cout << event2.getName() << " has more total seats than" << event.getName();
+		cout << event2.getName() << " has more total seats than " << event.getName();
+		*/
 }

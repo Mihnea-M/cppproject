@@ -53,7 +53,9 @@ void UserClass::setAge(int age)
 		//memory leak?? from transforming the char array into a string?
 	}
 	*/
-
+	int UserClass::getId() {
+	return this->userId;
+	}
 
 	string UserClass::getUsername() {
 		return this->userName;
@@ -72,20 +74,20 @@ void UserClass::setAge(int age)
 		
 	}
 
-	UserClass::UserClass() {
+	UserClass::UserClass():userId(0) {
 
 	}
 
 
-	UserClass::UserClass(const string name, const char* pass, const string email, int age) {
+	/*UserClass::UserClass(const string name, const char* pass, const string email, int age) {
 			this->setUserName(name);
 			this->setPassword(pass);
 			this->setEmail(email);
 			this->age = age;
 			this->type = UserTypes::BASIC;
-	}
+	}*/
 
-	UserClass::UserClass(const string name, const string email, const char* pass, int age) {
+	UserClass::UserClass(const int id, const string name, const string email, const char* pass, int age):userId(id) {
 		this->setUserName(name);
 		this->setPassword(pass);
 		this->setEmail(email);
@@ -93,7 +95,7 @@ void UserClass::setAge(int age)
 		this->type = UserTypes::BASIC;
 	}
 
-	UserClass::UserClass(const UserClass* user) {
+	UserClass::UserClass(const UserClass* user):userId(0) {
 		delete[] this->password;
 		if (user->password != nullptr)
 		{
@@ -128,12 +130,14 @@ void UserClass::setAge(int age)
 		delete[]this->password;
 	}
 
+	//to be seen when typing "user"
 	void operator<<(ostream& console, UserClass* user) {
 		if (user->getType() == UserTypes::BASIC)
 		{
 			system("cls");
+			cout << endl << "Currently logged in as:";
 			cout << endl << "--------------------------------" << endl;
-			cout << "Username: " << user->getUsername() << endl << "Email: " << user->getEmail() << endl << "Age: " << user->getAge();
+			cout << "Id: " << user->getId() << endl << "Username: " << user->getUsername() << endl << "Email: " << user->getEmail() << endl << "Age: " << user->getAge();
 			cout << endl << "--------------------------------" << endl;
 		}
 		else

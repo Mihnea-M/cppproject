@@ -50,6 +50,7 @@ void UserValidation::checkAge(const int age) {
 
 void UserValidation::checkCredentialAvaliability(const string newUser, const string newEmail) {
 	bool test = 0;
+	int userId = 0;
 	int sizeUser = 0, sizePass = 0, sizeEmail = 0;
 	char* usernameArr = nullptr, * passwordArr = nullptr, * emailArr = nullptr;
 	int age;
@@ -58,8 +59,12 @@ void UserValidation::checkCredentialAvaliability(const string newUser, const str
 	file.open(UserValidation::USERFILE, ios::in, ios::binary);
 	if (file.is_open())
 	{
+		file.seekg(sizeof(int), ios::beg);
 		while (!file.eof())
 		{
+			//reading the id
+			file.read((char*)&userId, sizeof(int));
+
 			//reading size of username and username
 			file.read((char*)&sizeUser, sizeof(int));
 			usernameArr = new char[sizeUser];

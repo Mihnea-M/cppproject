@@ -19,6 +19,7 @@ UserClass* LogIn::logIn(const string name, const char* password) {
 	}
 	checkPassword(password);
 	bool test = 0;
+	int userId = 0;
 	int sizeUser = 0, sizePass = 0, sizeEmail = 0;
 	char* usernameArr = nullptr, * passwordArr = nullptr, * emailArr = nullptr;
 	int age = 0;
@@ -28,8 +29,12 @@ UserClass* LogIn::logIn(const string name, const char* password) {
 	file.open(LogIn::USERFILE, ios::in, ios::binary);
 	if (file.is_open())
 	{
+		file.seekg(sizeof(int), ios::beg);
 		while (!file.eof())
 		{
+			//reading the id
+			file.read((char*)&userId, sizeof(int));
+
 			//reading size of username and username
 			file.read((char*)&sizeUser, sizeof(int));
 			usernameArr = new char[sizeUser];
@@ -51,7 +56,7 @@ UserClass* LogIn::logIn(const string name, const char* password) {
 			//checking if the log in credentials are correct
 			if ((strcmp(name.c_str(), usernameArr) == 0 && strcmp(password, passwordArr) == 0) || (strcmp(name.c_str(), emailArr) == 0 && strcmp(password, passwordArr) == 0))
 			{
-				newUser = new UserClass(string(usernameArr), string(emailArr), passwordArr, age);
+				newUser = new UserClass(userId, string(usernameArr), string(emailArr), passwordArr, age);
 				delete[] usernameArr;
 				delete[] passwordArr;
 				delete[] emailArr;
