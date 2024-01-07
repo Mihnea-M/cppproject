@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include <string.h>
-
+#include "LocationLayout.h"
 using namespace std;
 
 class LocationClass

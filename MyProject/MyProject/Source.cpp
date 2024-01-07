@@ -15,12 +15,27 @@ using namespace std;
 //TO DO: create classes for the seats, rows, zones
 //create the user interface class
 
+#include "LocationLayout.h"
 
 int main()
 {
-	Console console;
-	console.start();
-	
+	//Console console;
+	//console.start();
+
+	SeatClass seat;
+	seat.setOwner(1);
+	RowClass row(3);
+	//RowClass rowCopy(row);
+	cin >> row;
+	cout << row.getNoOfFreeSeats();
+	string name = "name";
+	RowClass** rows = new RowClass*[1];
+	rows[0] = &row;
+	//rows[1] = &rowCopy;
+	ZoneClass zone(name, 1, 1, rows);
+	cin >> zone;
+	//cout << endl << zone.getNoOfFreeSeats();
+
 	/*
 	string zones[] = { "Row 1", "Row 2" };
 	int noSeats[] = { 10, 20 };
