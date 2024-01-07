@@ -119,6 +119,8 @@ std::string ZoneClass::getName() {
 }
 
 void ZoneClass::setBasePricePerSeat(float price) {
+	if (price < 0)
+		throw std::exception("Invalid price.");
 	this->basePricePerSeat = price;
 }
 
@@ -131,19 +133,24 @@ void ZoneClass::setRows(int noRows, RowClass** rows) {
 		throw std::exception("Invalid no. of rows");
 	delete[] this->rows;
 	this->noRows = noRows;
-	this->rows = new RowClass*[this->noRows];
+	this->rows = new RowClass * [this->noRows];
 	for (int i = 0;i < this->noRows;i++) {
 		this->rows[i] = new RowClass(*rows[i]);
 	}
 }
 
 void ZoneClass::addRow(RowClass& row) {
-	RowClass** newRows = new RowClass*[this->noRows + 1];
-	for (int i = 0;i < this->noRows;i++) {
+	int i;
+	RowClass** newRows = new RowClass * [this->noRows + 1];
+	for (i = 0;i < this->noRows;i++) {
 		newRows[i] = this->rows[i];
 	}
 	this->noRows++;
 	newRows[this->noRows - 1] = new RowClass(row);
+	for (i = 0; i < this->noRows; i++) {
+		delete this->rows[i];
+	}
+	delete[] this->rows;
 	this->rows = newRows;
 }
 
@@ -182,7 +189,7 @@ ZoneClass::ZoneClass(const ZoneClass& source)
 		delete this->rows[i];
 	}
 	delete[] this->rows;
-		this->rows = new RowClass * [source.noRows];
+	this->rows = new RowClass * [source.noRows];
 	for (int i = 0; i < source.noRows; ++i) {
 		this->rows[i] = new RowClass(*source.rows[i]);
 	}
@@ -204,34 +211,58 @@ void ZoneClass::operator= (const ZoneClass& source) {
 
 
 void operator>>(std::istream& console, ZoneClass& zone) {
-	
-		std::string name;
-		float basePricePerSeat;
-		int noRows, noSeatsInRow;
 
-		std::cout << "Enter Zone Name: ";
-		console.ignore();
-		std::getline(console, name);
-		zone.setName(name);
-		console.clear();
-		std::cout << "Enter Base Price Per Seat: ";
-		console >> basePricePerSeat;
-		zone.setBasePricePerSeat(basePricePerSeat);
-
-		std::cout << "Enter Number of Rows: ";
-		console >> noRows;
-
-		RowClass** rows = new RowClass * [noRows];
-		for (int i = 0; i < noRows; ++i) {
-			std::cout << "Enter number of seats in row " << (i + 1) << ": ";
-			console >> noSeatsInRow;
-
-			rows[i] = new RowClass(noSeatsInRow); // Assuming RowClass has a constructor that takes noSeats as a parameter
-			// Additional setup for RowClass if needed
+	char buffer[20];
+	float basePricePerSeat;
+	int noRows, noSeatsInRow;
+	console.ignore();
+	while(1){
+		std::cout << std::endl << "Enter Zone Name: ";
+		console.getline(buffer, 20);
+		try {
+			zone.setName(buffer);
+			break;
 		}
-		zone.setRows(noRows, rows);
-
-		// Note: Remember to manage the memory for rows array in ZoneClass appropriately
-
-
+		catch (std::exception e) {
+			system("cls");
+			std::cout << e.what();
+		}
+	}
+	while (1) {
+		std::cout << std::endl << "Enter Base Price Per Seat: ";
+		console >> basePricePerSeat;
+		try {
+			zone.setBasePricePerSeat(basePricePerSeat);
+			break;
+		}
+		catch (std::exception e) {
+			system("cls");
+			std::cout << e.what();
+		}
+	}
+	while (1) {
+		std::cout << std::endl << "Enter Number of Rows: ";
+		console >> noRows;
+		if (noRows < 1) {
+			system("cls");
+			std::cout << "Invalid no or rows";
+		}
+		else
+			break;
+	}
+	RowClass** rows = new RowClass * [noRows];
+	for (int i = 0; i < noRows; ++i) {
+		while (1) {
+			std::cout << std::endl << "Enter number of seats in row " << i + 1 << ": ";
+			console >> noSeatsInRow;
+			if (noSeatsInRow < 1) {
+				system("cls");
+				std::cout << "Invalid no or rows";
+			}
+			else
+				break;
+		}
+		rows[i] = new RowClass(noSeatsInRow); 
+	}
+	zone.setRows(noRows, rows);
 }

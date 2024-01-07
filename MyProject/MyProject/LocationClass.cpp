@@ -51,16 +51,15 @@ void LocationClass::addZoze(const string zoneName, const int zoneNoSeat) {
 	this->zoneNoSeats = tempNo;
 }
 
-void LocationClass::addressToCoord(const string address) {
-	//TODO: find smth to make an api call to the google maps geocoding api
-	//until
-	this->lat = 44.447961;
-	this->lon = 26.099141;
+void LocationClass::setCoord(const string address) {
+	Coordinates coord = extractCoord(apiCall(address));
+	this->coords.lat = coord.lat;
+	this->coords.lon = coord.lon;
 }
 
 string LocationClass::generateLink() {
 	string link;
-	link = "http://www.google.com/maps/place/" + to_string(this->lat) + "," + to_string(this->lon);
+	link = "http://www.google.com/maps/place/" + to_string(this->coords.lat) + "," + to_string(this->coords.lon);
 	return link;
 }
 
@@ -99,7 +98,7 @@ LocationClass::LocationClass()
 LocationClass::LocationClass(const char* name, const int noZones, const string* zoneNames, const int* zoneNoSeats, const string address) {
 	this->setName(name);
 	this->setZones(noZones, zoneNames, zoneNoSeats);
-	this->addressToCoord(address);
+	this->setCoord(address);
 }
 
 LocationClass::~LocationClass() {
@@ -223,6 +222,6 @@ void operator>>(istream& console, LocationClass& loc) {
 	cout << "Adress: ";
 	console.getline(buffer,40);
 	console.clear();
-	loc.addressToCoord(buffer);
+	loc.setCoord(buffer);
 
 }

@@ -3,12 +3,15 @@
 #include <string>
 #include <string.h>
 #include "LocationLayout.h"
+#include "APICall.h"
 using namespace std;
 
 class LocationClass
 {
 	char* name=nullptr;
 	int noZones=0;
+	ZoneClass** zones = nullptr;
+	Coordinates coords;
 	string* zoneNames = nullptr;
 	int* zoneNoSeats = nullptr;
 	double lat = 0, lon = 0;
@@ -24,7 +27,7 @@ public:
 
 	void addZoze(const string zoneName, const int zoneNoSeat);
 
-	void addressToCoord(const string address);
+	void setCoord(const string address);
 
 	string generateLink();
 
