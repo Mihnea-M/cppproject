@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <string.h>
 #include "LocationLayout.h"
@@ -8,43 +9,51 @@ using namespace std;
 
 class LocationClass
 {
+
 	char* name=nullptr;
 	int noZones=0;
 	ZoneClass** zones = nullptr;
 	Coordinates coords;
-	string* zoneNames = nullptr;
-	int* zoneNoSeats = nullptr;
-	double lat = 0, lon = 0;
+
 
 	static const int MIN_NAME_SIZE = 3;
 	static const int MAX_NAME_SIZE = 35;
 	static const int MIN_ZONE = 1;
+	static constexpr char LOCFILE[] = "locations.dat";
+
+	LocationClass();
 
 public:
 	void setName(const char* name);
 
-	void setZones(const int noZones, const string* zoneNames, const int* zoneNoSeats);
+	void setZones(int noZones, ZoneClass** zones);
 
-	void addZoze(const string zoneName, const int zoneNoSeat);
+	void addZone(const ZoneClass& zone);
 
 	void setCoord(const string address);
 
 	string generateLink();
 
-
 	char* getName();
 
 	int getNoZones();
 
-	string* getZoneNames();
+	int getNoOfSeatsOfZone(int zoneNo);
 
-	int* getNoSeats();
+	int getTotalNoOfSeats();
 
-	
+	LocationClass* getLocationFromId(int id);
 
-	LocationClass();
+	void writeInfo();
 
-	LocationClass(const char* name, const int noZones, const string* zoneNames, const int* zoneNoSeats, const string address);
+	static void printSavedLocations();
+
+private:
+	void checkAvailability();
+
+public:
+
+	LocationClass(const char* name, const int noZones, ZoneClass** zones, const string address);
 
 	~LocationClass();
 
@@ -52,9 +61,7 @@ public:
 
 	void operator= (const LocationClass& source);
 
-	int operator[](int index);
-
-	explicit operator int();
+	bool operator== (const LocationClass& loc);
 };
 
 void operator<<(ostream& console, LocationClass& loc);

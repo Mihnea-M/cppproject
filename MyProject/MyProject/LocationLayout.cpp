@@ -1,110 +1,41 @@
 #include "LocationLayout.h"
 
-//Seat functions
-
-void SeatClass::setOwner(int userId) {
-	if (userId < 1)
-		throw std::exception("Invalid user id");
-	this->isOccupied = true;
-	this->userId = userId;
-}
-
-void SeatClass::setUnoccupied() {
-	this->isOccupied = false;
-	this->userId = 0;
-}
-
-int SeatClass::getSeatOwner() {
-	return this->userId;
-}
-
-bool SeatClass::isAvailable() {
-	if (this->isOccupied == true)
-		return false;
-	else
-		return true;
-}
-
 //Row functions
 
 void RowClass::setNoSeats(int noSeats) {
 	if (noSeats < 0)
 		throw std::exception("invalid no of seats");
-	this->noSeats = noSeats;
-	delete[] this->seats;
-	this->seats = new SeatClass[this->noSeats];
-}
-
-void RowClass::addSeat(SeatClass& seat) {
-	this->noSeats++;
-	SeatClass* newSeats = new SeatClass[this->noSeats];
-	for (int i = 0;i < this->noSeats - 1;i++) {
-		newSeats[i] = this->seats[i];
-	}
-	delete[] this->seats;
-	newSeats[this->noSeats - 1] = seat;
-	this->seats = newSeats;
+	this->noSeats = noSeats;	
 }
 
 int RowClass::getNoSeats() {
 	return this->noSeats;
 }
 
-int RowClass::getNoOfFreeSeats() {
-	int no = 0, i;
-	for (i = 0;i < this->noSeats;i++) {
-		if (this->seats[i].isAvailable() == true) {
-			no++;
-		}
-	}
-	return no;
-}
-
-void RowClass::buySeat(int seatNo, int userId) {
-	if (seatNo > this->noSeats)
-		throw std::exception("Invalid seat number.");
-	this->seats[seatNo - 1].setOwner(userId);
-}
-
 RowClass::RowClass(int noSeats) {
 	this->setNoSeats(noSeats);
-	this->seats = new SeatClass[noSeats];
+	
 }
 
 RowClass::~RowClass() {
-	delete[] this->seats;
+	
 }
 
 RowClass::RowClass(const RowClass& source) {
 	if (this == &source) {
 		return;
 	}
-	delete[] this->seats;
 	this->noSeats = source.noSeats;
-	this->seats = new SeatClass[this->noSeats];
-	for (int i = 0;i < this->noSeats;i++) {
-		this->seats[i] = source.seats[i];
-	}
 }
 
 void RowClass::operator=(const RowClass& source) {
 	if (this == &source) {
 		return;
 	}
-	delete[] this->seats;
 	this->noSeats = source.noSeats;
-	this->seats = new SeatClass[this->noSeats];
-	for (int i = 0;i < this->noSeats;i++) {
-		this->seats[i] = source.seats[i];
-	}
+	
 }
 
-void operator>> (std::istream& console, RowClass& row) {
-	std::cout << std::endl << "How many seats does this row have?";
-	int no;
-	console >> no;
-	row.setNoSeats(no);
-}
 
 //Zone funtions
 
@@ -131,6 +62,8 @@ float ZoneClass::getBasePricePerSeat() {
 void ZoneClass::setRows(int noRows, RowClass** rows) {
 	if (noRows < 1)
 		throw std::exception("Invalid no. of rows");
+	for (int i = 0;i < this->noRows;i++)
+		delete this->rows[i];
 	delete[] this->rows;
 	this->noRows = noRows;
 	this->rows = new RowClass * [this->noRows];
@@ -154,18 +87,43 @@ void ZoneClass::addRow(RowClass& row) {
 	this->rows = newRows;
 }
 
-int ZoneClass::getNoOfFreeSeats() {
-	int no = 0, i;
-	for (i = 0;i < this->noRows;i++) {
-		no += this->rows[i]->getNoOfFreeSeats();
-	}
+int ZoneClass::getNoRows() {
+	return this->noRows;
+}
+
+int ZoneClass::getNoSeats() {
+	int no = 0;
+	for (int i = 0;i < this->noRows;i++)
+		no += this->rows[i]->getNoSeats();
 	return no;
 }
 
-void ZoneClass::buySeat(int rowNo, int seatNo, int userId) {
-	if (rowNo > this->noRows)
-		throw std::exception("Invalid row no.");
-	this->rows[rowNo - 1]->buySeat(seatNo, userId);
+void ZoneClass::printRows(std::ostream& console) {
+	for (int i = 0; i < this->getNoRows(); ++i) {
+		console << "Row " << i + 1 << ": ";
+		console << *(this->rows[i]);
+		console << std::endl;
+	}
+}
+
+void ZoneClass::writeToFile(std::fstream& file) {
+	//write zone name size and name
+	int size = name.length()+1;
+	file.write((char*)&size, sizeof(int));
+	file.write(name.c_str(), size);
+	//price
+	file.write((char*)&basePricePerSeat, sizeof(float));
+	//write no of rows
+	file.write((char*)&noRows, sizeof(int));
+	for (int i = 0;i < noRows;i++) {
+		int temp = this->rows[i]->getNoSeats();
+		file.write((char*)&temp, sizeof(int));
+	}
+}
+
+
+ZoneClass::ZoneClass() {
+
 }
 
 ZoneClass::ZoneClass(std::string name, float price, int noRows, RowClass** rows) {
@@ -189,6 +147,9 @@ ZoneClass::ZoneClass(const ZoneClass& source)
 		delete this->rows[i];
 	}
 	delete[] this->rows;
+	this->name = source.name;
+	this->basePricePerSeat = source.basePricePerSeat;
+	this->noRows = source.noRows;
 	this->rows = new RowClass * [source.noRows];
 	for (int i = 0; i < source.noRows; ++i) {
 		this->rows[i] = new RowClass(*source.rows[i]);
@@ -203,6 +164,9 @@ void ZoneClass::operator= (const ZoneClass& source) {
 		delete this->rows[i];
 	}
 	delete[] this->rows;
+	this->name = source.name;
+	this->basePricePerSeat = source.basePricePerSeat;
+	this->noRows = source.noRows;
 	this->rows = new RowClass * [source.noRows];
 	for (int i = 0; i < source.noRows; ++i) {
 		this->rows[i] = new RowClass(*source.rows[i]);
@@ -210,13 +174,34 @@ void ZoneClass::operator= (const ZoneClass& source) {
 }
 
 
+void operator<<(std::ostream& console, RowClass& row) {
+	console << "Number of Seats: " << row.getNoSeats();
+}
+
+void operator<<(std::ostream& console, ZoneClass& zone) {
+	console << std::endl;
+	console << "Zone Name: " << zone.getName();
+	console << ", ";
+	console << "Base Price Per Seat: " << zone.getBasePricePerSeat() << ", ";
+	console << "Number of Rows: " << zone.getNoRows() << std::endl;
+	zone.printRows(console);
+
+}
+
+void operator>> (std::istream& console, RowClass& row) {
+	std::cout << std::endl << "How many seats does this row have?";
+	int no;
+	console >> no;
+	row.setNoSeats(no);
+}
+
 void operator>>(std::istream& console, ZoneClass& zone) {
 
 	char buffer[20];
 	float basePricePerSeat;
 	int noRows, noSeatsInRow;
-	console.ignore();
-	while(1){
+	console.clear();
+	while (1) {
 		std::cout << std::endl << "Enter Zone Name: ";
 		console.getline(buffer, 20);
 		try {
@@ -238,6 +223,7 @@ void operator>>(std::istream& console, ZoneClass& zone) {
 		catch (std::exception e) {
 			system("cls");
 			std::cout << e.what();
+			console.clear();
 		}
 	}
 	while (1) {
@@ -257,12 +243,12 @@ void operator>>(std::istream& console, ZoneClass& zone) {
 			console >> noSeatsInRow;
 			if (noSeatsInRow < 1) {
 				system("cls");
-				std::cout << "Invalid no or rows";
+				std::cout << "Invalid no of seats.";
 			}
 			else
 				break;
 		}
-		rows[i] = new RowClass(noSeatsInRow); 
+		rows[i] = new RowClass(noSeatsInRow);
 	}
 	zone.setRows(noRows, rows);
 }

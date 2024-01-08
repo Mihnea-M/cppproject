@@ -8,7 +8,6 @@
 //#include "EventClass.h"
 
 #include "Console.h"
-
 #include "LocationClass.h"
 using namespace std;
 
@@ -18,13 +17,22 @@ using namespace std;
 //create the user interface class
 
 
+//print locations information
 
 int main()
 {
-	
-	LocationClass loc;
-	string ad = "facultatea de cibernetica ase";
-	loc.setCoord(ad);
-	cout << loc.generateLink();
 
+	/*ZoneClass zone;
+	cin >> zone;
+	ZoneClass* zones[1];
+	zones[0] = &zone;
+
+	LocationClass location("Sala palatului", 1, zones, "Sala palatului bucuresti");
+	try {
+		location.writeInfo();
+	}
+	catch (exception e) {
+		cout << e.what();
+	}*/
+	LocationClass::printSavedLocations();
 }

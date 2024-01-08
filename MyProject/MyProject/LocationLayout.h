@@ -1,36 +1,16 @@
 #pragma once
 #include <iostream>
 #include <string>
-
-class SeatClass {
-	bool isOccupied = false;
-	int userId = 0;
-public:
-
-	void setOwner(int userId);
-
-	void setUnoccupied();
-
-	int getSeatOwner();
-
-	bool isAvailable();
-};
-
+#include <fstream>
 
 class RowClass {
 	int noSeats = 0;
-	SeatClass* seats = nullptr;
+
 public:
 
 	void setNoSeats(int noSeats);
 
-	void addSeat(SeatClass& seat);
-
 	int getNoSeats();
-
-	int getNoOfFreeSeats();
-
-	void buySeat(int seatNo, int userId);
 
 	RowClass(int noSeats);
 
@@ -43,6 +23,8 @@ public:
 
 void operator>>(std::istream& console, RowClass& row);
 
+void operator<<(std::ostream& console, RowClass& row);
+
 class ZoneClass
 {
 	std::string name = "";
@@ -52,6 +34,7 @@ class ZoneClass
 
 	static const int MAX_NAME_SIZE = 20;
 	static const int MIN_NAME_SIZE = 1;
+	
 public:
 	void setName(std::string name);
 
@@ -65,9 +48,15 @@ public:
 
 	void addRow(RowClass &row);
 
-	int getNoOfFreeSeats();
+	int getNoRows();
 
-	void buySeat(int rowNo, int seatNo, int userId);
+	int getNoSeats();
+
+	void printRows(std::ostream& console);
+
+	void writeToFile(std::fstream& file);
+
+	ZoneClass();
 
 	ZoneClass(std::string name, float price, int noRows, RowClass** rows);
 
@@ -79,3 +68,10 @@ public:
 };
 
 void operator>>(std::istream& console, ZoneClass& zone);
+
+void operator<<(std::ostream& console, ZoneClass& zone);
+
+
+
+
+
