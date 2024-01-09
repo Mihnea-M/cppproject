@@ -13,15 +13,34 @@ void Console::start() {
 		switch (command)
 		{
 		case EventCommands::CREATE:
+		{
 			EventClass::createEvent();
+			break;
+		}
 		case EventCommands::VIEW:
+		{
 			EventClass::printSavedEvents();
+			break;
+		}
 		case EventCommands::BUY:
+		{
+			TicketClass::buyTicket(user->getId());
 			break;
+		}
 		case EventCommands::TICKET:
-			break;
+		{
+			cout << endl << "Please enter your ticket id: ";
+			string ticket;
+			cin >> ticket;
+			cout << endl;
+			if (TicketClass::checkTicket(ticket) == true)
+				cout << "You have a valid ticket";
+		}
 		case EventCommands::USER:
+		{
 			cout << user;
+			break;
+		}
 		case EventCommands::QUIT:
 			break;
 		}

@@ -1,19 +1,10 @@
-//#include <iostream>
-//#include <fstream>
-//#include <string.h>
-//#include <string>
-//#include "UserClass.h"
-//#include "TextFunctions.h"
-//#include "LocationClass.h"
-//#include "EventClass.h"
-
 #include "Console.h"
 
 using namespace std;
 
-
-//admin password = Pass123
-//set env variable API_KEY = 
+//to have admin privileges type admin and the password Pass123
+//an aready existing account is Andrei with the password Andre1
+//set env variable API_KEY 
 
 
 int main()

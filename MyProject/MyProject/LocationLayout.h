@@ -52,6 +52,8 @@ public:
 
 	int getNoSeats();
 
+	int getNoSeatOfRow(int rowNo);
+
 	void printRows(std::ostream& console);
 
 	void writeToFile(std::fstream& file);

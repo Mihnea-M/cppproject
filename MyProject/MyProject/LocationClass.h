@@ -43,6 +43,10 @@ public:
 
 	int getNoOfSeatsOfZone(int zoneNo);
 
+	int getNoRowsOfZone(int zoneNo);
+
+	int getNoOfSeatOfRow(int zoneNo, int rowNo);
+
 	int getTotalNoOfSeats();
 
 	static LocationClass* getLocationFromId(int searchId);
@@ -58,6 +62,8 @@ private:
 	void checkAvailability();
 
 public:
+
+	void printDetailedDescription();
 
 	LocationClass(const char* name, const int noZones, ZoneClass** zones, const string address);
 

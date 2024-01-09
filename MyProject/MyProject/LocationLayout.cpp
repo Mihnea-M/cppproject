@@ -98,6 +98,10 @@ int ZoneClass::getNoSeats() {
 	return no;
 }
 
+int ZoneClass::getNoSeatOfRow(int rowNo) {
+	return this->rows[rowNo]->getNoSeats();
+}
+
 void ZoneClass::printRows(std::ostream& console) {
 	for (int i = 0; i < this->getNoRows(); ++i) {
 		console << "Row " << i + 1 << ": ";

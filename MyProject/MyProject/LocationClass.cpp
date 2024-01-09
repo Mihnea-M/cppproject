@@ -70,6 +70,14 @@ int LocationClass::getNoOfSeatsOfZone(int zoneNo) {
 	return this->zones[zoneNo - 1]->getNoSeats();
 }
 
+int LocationClass::getNoRowsOfZone(int zoneNo){
+	return this->zones[zoneNo]->getNoRows();
+}
+
+int LocationClass::getNoOfSeatOfRow(int zoneNo, int rowNo) {
+	return this->zones[zoneNo]->getNoSeatOfRow(rowNo);
+}
+
 int LocationClass::getTotalNoOfSeats() {
 	int no = 0;
 	for (int i = 0;i<this->noZones;i++)
@@ -443,5 +451,16 @@ void operator>>(istream& console, LocationClass& loc) {
 			system("cls");
 			cout << e.what()<< endl;
 		}
+	}
+}
+
+void LocationClass::printDetailedDescription() {
+	cout << endl << "Location name: " << this->name << endl;
+	cout << "No of zones: " << this->noZones << endl;
+	for (int i = 0;i < this->noZones;i++)
+	{
+		cout << "Zone " << i + 1 << " :";
+		cout << *this->zones[i];
+		cout << endl;
 	}
 }
