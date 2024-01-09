@@ -200,6 +200,7 @@ void operator>>(std::istream& console, ZoneClass& zone) {
 	char buffer[20];
 	float basePricePerSeat;
 	int noRows, noSeatsInRow;
+	console.ignore();
 	console.clear();
 	while (1) {
 		std::cout << std::endl << "Enter Zone Name: ";
@@ -222,12 +223,13 @@ void operator>>(std::istream& console, ZoneClass& zone) {
 		}
 		catch (std::exception e) {
 			system("cls");
-			std::cout << e.what();
+			std::cout << e.what() << std::endl;
 			console.clear();
 		}
+		std::cout << std::endl;
 	}
 	while (1) {
-		std::cout << std::endl << "Enter Number of Rows: ";
+		std::cout  << "Enter Number of Rows: " << std::endl;
 		console >> noRows;
 		if (noRows < 1) {
 			system("cls");
@@ -239,8 +241,9 @@ void operator>>(std::istream& console, ZoneClass& zone) {
 	RowClass** rows = new RowClass * [noRows];
 	for (int i = 0; i < noRows; ++i) {
 		while (1) {
-			std::cout << std::endl << "Enter number of seats in row " << i + 1 << ": ";
+			std::cout  << "Enter number of seats in row " << i + 1 << ": ";
 			console >> noSeatsInRow;
+			std::cout << std::endl;
 			if (noSeatsInRow < 1) {
 				system("cls");
 				std::cout << "Invalid no of seats.";

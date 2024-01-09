@@ -1,35 +1,51 @@
 #pragma once
 #include "LocationClass.h"
+
 class EventClass
 {
 	string name = "";
-	char date[11] = "dd.mm.yyyy";
-	char time[6] = "hh:mm";
-	LocationClass location;
+	string date = "dd.mm.yyyy";
+	string time = "hh:mm";
+	int durationInMinutes = 0;
+	int locationId = 0;
 
+	static constexpr char EVENTFILE[] = "events.dat";
+
+	EventClass();
 public:
 
 	void setName(const string name);
 
-	void setDate(const char* date);
+	void setDate(const string date);
 
-	void setTime(const char* time);
+	void setTime(const string time);
 
-	void setLocation(const LocationClass &loc);
+	void setLocation(const int locationId);
+
+	void setDuration(const int minutes);
 
 	string getName();
 
-	char* getDate();
+	string getDate();
 
-	char* getTime();
+	string getTime();
 
-	int getTotalSeats();
+	int getDuration();
 
-	LocationClass *getLocation();
+	int getLocationId();
 
-	EventClass(const string name, const char* date, const char* time, const LocationClass &loc);
+	//writes to file and returns the id of the location in the file
+	int writeInfo();
 
-	bool operator>(EventClass& ev2);
+	static EventClass* getEventFromId(int searchId);
+
+	static void createEvent();
+
+	static void printSavedEvents();
+
+	
+
+	EventClass(const string name,const string date, const string time, const int locationId);
 
 };
 

@@ -1,12 +1,4 @@
 #include "Console.h"
-#include <iostream>
-#include <fstream>
-#include <string.h>
-#include <string>
-#include "UserClass.h"
-#include "TextFunctions.h"
-#include "LocationClass.h"
-#include "EventClass.h"
 
 void Console::start() {
 	printIntroduction();
@@ -21,9 +13,9 @@ void Console::start() {
 		switch (command)
 		{
 		case EventCommands::CREATE:
-			break;
+			EventClass::createEvent();
 		case EventCommands::VIEW:
-			break;
+			EventClass::printSavedEvents();
 		case EventCommands::BUY:
 			break;
 		case EventCommands::TICKET:
@@ -35,5 +27,6 @@ void Console::start() {
 		}
 		printCommands(user->getType());
 		command = getCommand(user->getType());
+		system("cls");
 	}
 }

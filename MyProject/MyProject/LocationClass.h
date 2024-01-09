@@ -1,10 +1,13 @@
 #pragma once
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <string.h>
+
 #include "LocationLayout.h"
 #include "APICall.h"
+
 using namespace std;
 
 class LocationClass
@@ -20,7 +23,7 @@ class LocationClass
 	static const int MAX_NAME_SIZE = 35;
 	static const int MIN_ZONE = 1;
 	static constexpr char LOCFILE[] = "locations.dat";
-
+public:
 	LocationClass();
 
 public:
@@ -42,11 +45,14 @@ public:
 
 	int getTotalNoOfSeats();
 
-	LocationClass* getLocationFromId(int id);
-
-	void writeInfo();
+	static LocationClass* getLocationFromId(int searchId);
 
 	static void printSavedLocations();
+
+	static int getNoOfSavedLocs();
+
+	//writes to file and returns the id of the location in the file
+	int writeInfo();
 
 private:
 	void checkAvailability();

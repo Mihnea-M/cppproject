@@ -80,15 +80,17 @@ int LocationClass::getTotalNoOfSeats() {
 LocationClass* LocationClass::getLocationFromId(int searchId) {
 	ifstream file;
 	file.open(LocationClass::LOCFILE, ios::in, ios::binary);
-	LocationClass* location = new LocationClass;
+	LocationClass* location;
 	int id;
 	if (file.is_open()) {
+		
 		file.read((char*)&id, sizeof(int));
 		if (id < searchId) {
 			file.close();
 			throw exception("Invalid search id.");
 		}
 		while (file.read((char*)&id, sizeof(int))) {//id
+			LocationClass* location = new LocationClass;
 			//size of name and name
 			int size;
 			file.read((char*)&size, sizeof(int));
@@ -141,8 +143,18 @@ LocationClass* LocationClass::getLocationFromId(int searchId) {
 	}
 	file.close();
 }
-
-void LocationClass::writeInfo() {
+//file structure
+	//an integer containing total no of locations
+	//Location info
+	//location file id
+	//size of name and name
+	//no of zones
+	//size of zone name and name
+	//price
+	//no of rows
+	//no of seats for each row
+	//coordinates
+int LocationClass::writeInfo() {
 	this->checkAvailability();
 	fstream file;
 	file.open(LocationClass::LOCFILE, ios::out | ios::in, ios::binary);
@@ -157,18 +169,8 @@ void LocationClass::writeInfo() {
 		file.read((char*)&noOfLoc, sizeof(int));
 	}
 
-	//file structure
-	//an integer containing total no of locations
-	//Location info
-	//location file id
-	//size of name and name
-	//no of zones
-	//size of zone name and name
-	//price
-	//no of rows
-	//no of seats for each row
-	//coordinates
 	noOfLoc++;
+	file.seekp(0, ios::beg);
 	file.write((char*)&noOfLoc, sizeof(int));
 	file.seekp(0, ios::end);
 
@@ -185,16 +187,20 @@ void LocationClass::writeInfo() {
 	file.write((char*)&coords.lon, sizeof(float));
 	file.write((char*)&coords.lat, sizeof(float));
 	file.close();
+	return noOfLoc;
 }
+
 
 void LocationClass::checkAvailability() {
 	ifstream file;
 	file.open(LocationClass::LOCFILE, ios::in, ios::binary);
-	LocationClass *location = new LocationClass;
+	LocationClass* location;
 	int id;
 	if (file.is_open()) {
 		file.read((char*)&id, sizeof(int));
 		while (file.read((char*)&id, sizeof(int))) {//id
+			LocationClass* location = new LocationClass;
+
 			//size of name and name
 			int size;
 			file.read((char*)&size, sizeof(int));
@@ -242,22 +248,26 @@ void LocationClass::checkAvailability() {
 				file.close();
 				throw exception("Location already in memory");
 			}
-			delete location;
+			else{
+				delete location;
+			}
 
 		}
 	}
+	
 	file.close();
 }
 
 void LocationClass::printSavedLocations() {
 	ifstream file;
 	file.open(LocationClass::LOCFILE, ios::in, ios::binary);
-	LocationClass* location = new LocationClass;
+	LocationClass* location = nullptr;
 	int id;
 	if (file.is_open()) {
+		
 		file.read((char*)&id, sizeof(int));
 		while (file.read((char*)&id, sizeof(int))) {//id
-			
+			LocationClass* location = new LocationClass;
 			
 			//size of name and name
 			int size;
@@ -302,14 +312,24 @@ void LocationClass::printSavedLocations() {
 			file.read((char*)&location->coords.lat, sizeof(float));
 
 			cout << "Location Id: " << id << endl << "Location name: " << location->name << endl
-				<<"Location total no. of seats: " <<location->getTotalNoOfSeats() << endl << endl;
+				<<"Location total no. of seats: " <<location->getTotalNoOfSeats() << endl 
+				<<"Google Maps link: " << location->generateLink() << endl << endl;
 
 			delete location;
-
 		}
 	}
 }
 
+int LocationClass::getNoOfSavedLocs() {
+	ifstream file;
+	file.open(LocationClass::LOCFILE, ios::in, ios::binary);
+	int id = 0;
+	if (file.is_open()) {
+		file.read((char*)&id, sizeof(int));
+		file.close();
+	}
+	return id;
+}
 
 LocationClass::LocationClass()
 {
@@ -375,4 +395,53 @@ bool LocationClass::operator== (const LocationClass& loc) {
 	if (strcmp(this->name, loc.name) == 0 || (this->coords.lat == loc.coords.lat && this->coords.lat == loc.coords.lat))
 		return true;
 	return false;
+}
+
+void operator<<(ostream& console, LocationClass& loc) {
+	cout << endl << "Location name: " << loc.getName() << endl
+		<< "Location total no. of seats: " << loc.getTotalNoOfSeats() << endl
+		<< "Google Maps link: " << loc.generateLink() << endl << endl;
+}
+
+void operator>>(istream& console, LocationClass& loc) {
+	while (1) {
+		try {
+			char buffer[100];
+			console.ignore();
+			cout << "Location name: ";
+			console.getline(buffer, 100);
+			console.clear();
+			loc.setName(buffer);
+
+			int noZones;
+			cout << "Number of zones: ";
+			console >> noZones;
+			cout << endl;
+			ZoneClass** zones = new ZoneClass * [noZones];
+			ZoneClass* zone;
+
+			for (int i = 0;i < noZones; i++) {
+				cout << "Zone " << i + 1 << " info:";
+				zone = new ZoneClass;
+				console >> *zone;
+				zones[i] = zone;
+			}
+			cout << endl;
+			loc.setZones(noZones, zones);
+			console.clear();
+
+			console.ignore();
+			cout << "Address: ";
+			console.getline(buffer, 100);
+			console.clear();
+			loc.setCoord(buffer);
+			cout << endl;
+
+			break;
+		}
+		catch (exception e) {
+			system("cls");
+			cout << e.what()<< endl;
+		}
+	}
 }
