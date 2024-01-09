@@ -3,7 +3,10 @@
 #include <cstdlib> 
 #include <ctime>
 #include <string>
+#include <hpdf.h>
+#include "UserClass.h"
 #include "EventClass.h"
+
 using namespace std;
 
 class TicketClass
@@ -33,7 +36,9 @@ public:
 
 	static bool checkTicket(string ticket);
 
-	static void buyTicket(int userId);
+	static void buyTicket(UserClass*user);
+
+	void createTicketPDF(UserClass* user, EventClass* event, LocationClass* loc);
 
 	bool operator==(TicketClass& ticket);
 };

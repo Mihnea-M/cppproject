@@ -24,7 +24,7 @@ void Console::start() {
 		}
 		case EventCommands::BUY:
 		{
-			TicketClass::buyTicket(user->getId());
+			TicketClass::buyTicket(user);
 			break;
 		}
 		case EventCommands::TICKET:
@@ -34,7 +34,10 @@ void Console::start() {
 			cin >> ticket;
 			cout << endl;
 			if (TicketClass::checkTicket(ticket) == true)
-				cout << "You have a valid ticket";
+				cout << "You have a valid ticket!";
+			else
+				cout << "Your ticket id does not exist!";
+			break;
 		}
 		case EventCommands::USER:
 		{

@@ -1,6 +1,8 @@
 #include "EventClass.h"
 
 void EventClass::setName(const string name) {
+	if (name == "")
+		throw exception("Invalid name");
 	this->name = name;
 }
 

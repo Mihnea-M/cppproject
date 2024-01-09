@@ -233,7 +233,7 @@ void operator>>(std::istream& console, ZoneClass& zone) {
 		std::cout << std::endl;
 	}
 	while (1) {
-		std::cout  << "Enter Number of Rows: " << std::endl;
+		std::cout  << "Enter Number of Rows: ";
 		console >> noRows;
 		if (noRows < 1) {
 			system("cls");

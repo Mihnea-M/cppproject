@@ -71,11 +71,11 @@ int LocationClass::getNoOfSeatsOfZone(int zoneNo) {
 }
 
 int LocationClass::getNoRowsOfZone(int zoneNo){
-	return this->zones[zoneNo]->getNoRows();
+	return this->zones[zoneNo-1]->getNoRows();
 }
 
 int LocationClass::getNoOfSeatOfRow(int zoneNo, int rowNo) {
-	return this->zones[zoneNo]->getNoSeatOfRow(rowNo);
+	return this->zones[zoneNo-1]->getNoSeatOfRow(rowNo-1);
 }
 
 int LocationClass::getTotalNoOfSeats() {
